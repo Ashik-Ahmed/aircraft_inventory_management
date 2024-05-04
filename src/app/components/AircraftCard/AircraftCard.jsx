@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import Link from "next/link";
+import { Button } from "primereact/button";
 
 const AircraftCard = ({ title, imageSrc, imageAlt, id }) => {
     return (
