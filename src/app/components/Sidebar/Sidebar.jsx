@@ -35,7 +35,7 @@ const Sidebar = () => {
                 {
                     menus.map((menu, index) => (
 
-                        <Link key={index} href={menu.link} style={{ fontFamily: 'revert' }} className={`${currentPath.includes(menu.link) && 'border-r-2 border-r-violet-500 font-bold bg-white text-sky-600 rounded-l-3xl'} py-2 hover:tracking-wider hover:border-r-2 hover:border-r-violet-500  duration-200 cursor-pointer flex gap-x-4 items-center`}> {currentPath.includes(menu.link) ? <i className='pi pi-arrow-right scale-75 font-bold' /> : <i className='pi pi-ellipsis-h scale-75 ' />}
+                        <Link key={index} href={menu.link} style={{ fontFamily: 'revert' }} className={`${currentPath.includes(menu.link) && 'font-bold bg-white text-sky-600 rounded-l-3xl'} py-2 hover:tracking-wider hover:border-r-2 hover:border-r-violet-500  duration-200 cursor-pointer flex gap-x-4 items-center px-4`}>
                             {menu.icon}
                             {menu.title}
                         </Link>
