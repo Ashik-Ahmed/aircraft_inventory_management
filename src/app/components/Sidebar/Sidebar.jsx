@@ -25,7 +25,7 @@ const Sidebar = () => {
 
     return (
         <div className='sticky top-0 min-w-[300px] max-w-[300px] h-screen bg-sky-600 text-gray-700 '>
-            <Image src={army_logo} alt='logo' width={100} height={100} className='p-2 mx-auto' />
+            {/* <Image src={army_logo} alt='logo' width={100} height={100} className='p-2 mx-auto' /> */}
 
             <p className='text-white italic ml-4 mt-6 truncate w-[280px] flex items-center gap-x-2'>
                 {/* <FaUserAlt /> */}
