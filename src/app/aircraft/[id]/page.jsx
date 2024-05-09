@@ -8,16 +8,17 @@ import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import React, { useState } from 'react';
+import { Button } from 'primereact/button';
 
 const page = ({ params: { id } }) => {
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        cardNo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        nomenclature: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        stockNo: { value: null, matchMode: FilterMatchMode.IN },
-        uploadStatus: { value: null, matchMode: FilterMatchMode.EQUALS }
+        cardNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        nomenclature: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        stockNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        uploadStatus: { value: null, matchMode: FilterMatchMode.CONTAINS }
     });
 
     const onGlobalFilterChange = (e) => {
@@ -58,17 +59,21 @@ const page = ({ params: { id } }) => {
 
     return (
         <div>
-            <div className='border shadow-md p-2 bg-white rounded-md'>
+            <div className='flex justify-between items-center border shadow-md p-2 bg-white rounded-md'>
                 <p className='text-xl font-bold'>Aircraft {id}</p>
+                <Button label="Add Stock" icon="pi pi-plus" onClick={() => setAddNew(true)} className='bg-blue-400 text-white p-1' />
             </div>
             <div className='border shadow-md p-2 bg-white rounded-md mt-2 w-ful'>
-                <div className="flex justify-content-end m-2">
+                <div className="flex justify-between m-2">
+                    <div>
+                        <p className='text-lg text-gray-700 uppercase'>Available Stocks</p>
+                    </div>
                     <IconField iconPosition="left">
                         <InputIcon className="pi pi-search" />
-                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='pl-8' />
+                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='pl-8 border py-1' />
                     </IconField>
                 </div>
-                <DataTable value={itemList} size='small' paginator rows={10} rowsPerPageOptions={[5, 10, 20]} globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']}>
+                <DataTable value={itemList} size='small' paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']}>
                     <Column field="cardNo" header="Card No"></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature"></Column>
                     <Column field="stockNo" header="Stock/Parts No"></Column>
