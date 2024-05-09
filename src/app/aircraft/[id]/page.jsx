@@ -83,9 +83,9 @@ const page = ({ params: { id } }) => {
 
     const actionBodyTemplate = (rowData) => {
         return (
-            <div>
-                <Button label="Edit" icon="pi pi-pencil" className='bg-blue-400 text-white p-1' />
-                <Button label="Delete" icon="pi pi-trash" className='bg-red-400 text-white p-1 ml-2' />
+            <div className='flex gap-x-2'>
+                <Button icon="pi pi-pencil" size='small' severity='success' />
+                <Button icon="pi pi-trash" size='small' severity='danger' />
             </div>
         )
     }
@@ -101,19 +101,19 @@ const page = ({ params: { id } }) => {
         <div>
             <div className='flex justify-between items-center border shadow-md p-2 bg-white rounded-md'>
                 <p className='text-xl font-bold'>Aircraft {id}</p>
-                <Button label="Add Stock" icon="pi pi-plus" onClick={() => setAddStock(true)} className='bg-blue-400 text-white p-1' />
+                <Button label="Add Stock" icon="pi pi-plus" size='small' onClick={() => setAddStock(true)} />
             </div>
-            <div className='border shadow-md bg-white rounded-md mt-2 w-ful'>
-                <div className="flex justify-between m-2">
+            <div className='border shadow-md bg-white rounded-md mt-2 w-ful min-h-[90vh]'>
+                <div className="flex justify-between m-2 items-center">
                     <div>
                         <p className='text-lg text-gray-700 uppercase'>Available Stocks</p>
                     </div>
                     <IconField iconPosition="left">
                         <InputIcon className="pi pi-search" />
-                        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='pl-8 border py-1' />
+                        <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
                     </IconField>
                 </div>
-                <DataTable value={itemList} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']}>
+                <DataTable value={itemList} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']} responsiveLayout="scroll">
                     <Column field="cardNo" header="Card No"></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
                     <Column field="stockNo" header="Stock/Parts No"></Column>
@@ -147,8 +147,11 @@ const page = ({ params: { id } }) => {
                         {errors.stockNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.stockNo.message}</span>}
                     </div>
                     <div className='w-full'>
-                        <Dropdown value={selectedUnit} onChange={(e) => setSelectedUnit(e.value)} options={units} optionLabel="name"
+                        <Dropdown
+                            {...register("unit", { required: "Unit is required" })}
+                            value={selectedUnit} onChange={(e) => setSelectedUnit(e.value)} options={units} optionLabel="name"
                             placeholder="Select a Unit" className="w-full border" />
+                        {errors.unit?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.unit.message}</span>}
                     </div>
                     <div className='w-full'>
                         <InputText
@@ -166,9 +169,9 @@ const page = ({ params: { id } }) => {
                         control={control}
                         render={({ field }) => (
                             <Calendar
-                                // value={editEmployee?.joiningDate}
+                                // value={date}
                                 onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
-                                // placeholder={editEmployee?.joiningDate}
+                                placeholder='Date'
                                 className='w-full border p-1'
                             />
                         )}
