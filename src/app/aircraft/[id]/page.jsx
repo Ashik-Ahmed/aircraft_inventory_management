@@ -9,8 +9,18 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import React, { useState } from 'react';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { Controller, useForm } from 'react-hook-form';
+import { Calendar } from 'primereact/calendar';
+import { Dropdown } from 'primereact/dropdown';
 
 const page = ({ params: { id } }) => {
+
+    const [addStock, setAddStock] = useState(false);
+    const [editStock, setEditStock] = useState(false);
+    const [date, setDate] = useState(null);
+    const [selectedUnit, setSelectedUnit] = useState(null);
+
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -20,6 +30,9 @@ const page = ({ params: { id } }) => {
         stockNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
         uploadStatus: { value: null, matchMode: FilterMatchMode.CONTAINS }
     });
+
+
+    const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
@@ -45,6 +58,17 @@ const page = ({ params: { id } }) => {
         { _id: '11', cardNo: 'LP/12', nomenclature: 'HEAD SET', stockNo: '86S9M2024', quantity: 120, expiredDate: '2024-05-30', status: 'Sufficient', uploadStatus: 'Uploaded' },
     ]
 
+    const units = [
+        { name: 'No.' },
+        { name: 'Pcs' },
+        { name: 'Kg' },
+        { name: 'Box' },
+        { name: 'Litre' },
+        { name: 'Meter' },
+        { name: 'Set' },
+        { name: 'Ea' },
+    ]
+
     const nomenclatureBodyTemplate = (rowData) => {
         return (
             <Link href={`/aircraft/${id}/stock/${rowData?._id}`} className='hover:underline'>{rowData.nomenclature}</Link>
@@ -57,13 +81,29 @@ const page = ({ params: { id } }) => {
         );
     }
 
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <div>
+                <Button label="Edit" icon="pi pi-pencil" className='bg-blue-400 text-white p-1' />
+                <Button label="Delete" icon="pi pi-trash" className='bg-red-400 text-white p-1 ml-2' />
+            </div>
+        )
+    }
+
+    const handleAddNewStock = (data) => {
+        console.log("Add New Stock", data);
+        setAddStock(false);
+        setSelectedUnit(null);
+        reset();
+    }
+
     return (
         <div>
             <div className='flex justify-between items-center border shadow-md p-2 bg-white rounded-md'>
                 <p className='text-xl font-bold'>Aircraft {id}</p>
-                <Button label="Add Stock" icon="pi pi-plus" onClick={() => setAddNew(true)} className='bg-blue-400 text-white p-1' />
+                <Button label="Add Stock" icon="pi pi-plus" onClick={() => setAddStock(true)} className='bg-blue-400 text-white p-1' />
             </div>
-            <div className='border shadow-md p-2 bg-white rounded-md mt-2 w-ful'>
+            <div className='border shadow-md bg-white rounded-md mt-2 w-ful'>
                 <div className="flex justify-between m-2">
                     <div>
                         <p className='text-lg text-gray-700 uppercase'>Available Stocks</p>
@@ -73,16 +113,78 @@ const page = ({ params: { id } }) => {
                         <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='pl-8 border py-1' />
                     </IconField>
                 </div>
-                <DataTable value={itemList} size='small' paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']}>
+                <DataTable value={itemList} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']}>
                     <Column field="cardNo" header="Card No"></Column>
-                    <Column body={nomenclatureBodyTemplate} header="Nomenclature"></Column>
+                    <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
                     <Column field="stockNo" header="Stock/Parts No"></Column>
-                    <Column field="quantity" header="Quantity"></Column>
-                    <Column field="expiredDate" header="Latest Expire"></Column>
+                    <Column field="quantity" header="Quantity" sortable></Column>
+                    <Column field="expiredDate" header="Latest Expire" sortable></Column>
                     <Column body={statusBodyTemplate} header="Status"></Column>
                     <Column field="uploadStatus" header="Upload Status"></Column>
+                    <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
             </div>
+
+            <Dialog header="Add New Stock" visible={addStock} onHide={() => { setAddStock(false); setSelectedUnit(null); }}
+                style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
+                <form onSubmit={handleSubmit(handleAddNewStock)} className="flex flex-col gap-2 mt-4">
+
+                    {/* <InputText placeholder="Aircraft Name" className="border-2" />
+          <InputText placeholder="Aircraft ID" className="border-2" /> */}
+                    <div className='w-full'>
+                        <p className='text-lg text-gray-700'>Aircraft Name: <span>{id}</span></p>
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("cardNo", { required: "Card No. is required" })}
+                            placeholder="Card No.*" className='w-full border p-1' />
+                        {errors.cardNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.cardNo.message}</span>}
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("stockNo", { required: "Stock/Parts No. is required" })}
+                            placeholder="Stock/Parts No.*" className='w-full border p-1' />
+                        {errors.stockNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.stockNo.message}</span>}
+                    </div>
+                    <div className='w-full'>
+                        <Dropdown value={selectedUnit} onChange={(e) => setSelectedUnit(e.value)} options={units} optionLabel="name"
+                            placeholder="Select a Unit" className="w-full border" />
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("nomenclature", { required: "Nomenclature is required" })}
+                            placeholder="Nomenclature*" className='w-full border p-1' />
+                        {errors.nomenclature?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.nomenclature.message}</span>}
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("location")}
+                            placeholder="Location" className='w-full border p-1' />
+                    </div>
+                    <Controller
+                        name="date"
+                        control={control}
+                        render={({ field }) => (
+                            <Calendar
+                                // value={editEmployee?.joiningDate}
+                                onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
+                                // placeholder={editEmployee?.joiningDate}
+                                className='w-full border p-1'
+                            />
+                        )}
+                    />
+                    {/* <div className='mt-2'>
+                        <input
+                            {...register("aircraftPhoto", { required: "Photo is required" })}
+                            onChange={handlePhotoChange} name='file' type="file" className='w-full border border-violet-600' />
+                        {errors.aircraftPhoto?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.aircraftPhoto.message}</span>}
+                    </div> */}
+
+                    <div>
+                        <Button type="submit" label="Submit" className="bg-blue-400 text-white w-fit p-1"></Button>
+                    </div>
+                </form>
+            </Dialog>
         </div>
     );
 };
