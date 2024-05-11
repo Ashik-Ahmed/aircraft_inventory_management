@@ -3,16 +3,20 @@
 import { Dialog } from "primereact/dialog";
 import AircraftCard from "./components/AircraftCard/AircraftCard";
 import { Button } from "primereact/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { useForm } from "react-hook-form";
 import { FileUpload } from "primereact/fileupload";
+import { Toast } from "primereact/toast";
 
 
 export default function Home() {
 
+  const toast = useRef(null);
+
   const [addNew, setAddNew] = useState(false);
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
@@ -30,19 +34,61 @@ export default function Home() {
     { id: 10, title: 'Aircraft 10', imageSrc: 'https://cdn.jetphotos.com/full/6/73985_1579885991.jpg', imageAlt: 'Some image' },
   ]
 
-  const handleAddNewAircraft = (data) => {
-    console.log("Add New Aircraft", data);
-    console.log(image);
-    setAddNew(false);
-    reset();
-  }
 
   const handlePhotoChange = (event) => {
     setImage(event.target.files[0]);
   };
 
+  const handleAddNewAircraft = async (aircraftData) => {
+    setLoading(true);
+    // console.log("Add New Aircraft", aircraftData);
+    // console.log(image);
+
+    const aircraftPhoto = new FormData();
+    aircraftPhoto.append('image', image);
+
+    await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+      method: 'POST',
+      body: aircraftPhoto
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("inside imgbb api: ", data);
+
+        if (data?.data?.url) {
+          aircraftData.image = data.data.url
+          fetch('http://localhost:5000/api/v1/aircraft', {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+            },
+            body: JSON.stringify(aircraftData)
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.status == 'Success') {
+                console.log(data);
+                // toast.current.show({ severity: 'success', summary: 'Success', detail: 'Employee profile created', life: 3000 });
+              }
+              else {
+                console.log(data);
+                // toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Please try again.', life: 3000 });
+              }
+            })
+        }
+      })
+
+    setLoading(false);
+    setAddNew(false);
+    setImage(null)
+    reset();
+  }
+
+
   return (
     <main>
+      <Toast ref={toast} />
       <div className="flex justify-between mx-4">
         <h1 className="text-3xl font-bold">All Aircrafts</h1>
         <Button onClick={() => setAddNew(true)} label="Add New" icon="pi pi-plus" className="bg-blue-400 text-white p-1" />
