@@ -3,17 +3,18 @@
 import { Dialog } from "primereact/dialog";
 import AircraftCard from "./components/AircraftCard/AircraftCard";
 import { Button } from "primereact/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { useForm } from "react-hook-form";
-import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
+import { getAllAircraft } from "../../lib/Aircraft";
 
 
 export default function Home() {
 
   const toast = useRef(null);
 
+  const [allAircraft, setAllAircraft] = useState([]);
   const [addNew, setAddNew] = useState(false);
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,16 @@ export default function Home() {
     { id: 9, title: 'Aircraft 9', imageSrc: 'https://cdn.jetphotos.com/full/6/73985_1579885991.jpg', imageAlt: 'Some image' },
     { id: 10, title: 'Aircraft 10', imageSrc: 'https://cdn.jetphotos.com/full/6/73985_1579885991.jpg', imageAlt: 'Some image' },
   ]
+
+  const getAircraftData = async () => {
+    const data = await getAllAircraft();
+    console.log(data);
+    setAllAircraft(data?.data);
+  }
+
+  useEffect(() => {
+    getAircraftData();
+  }, []);
 
 
   const handlePhotoChange = (event) => {
@@ -67,16 +78,21 @@ export default function Home() {
           })
             .then(res => res.json())
             .then(data => {
+              console.log(data);
               if (data.status == 'Success') {
-                console.log(data);
-                // toast.current.show({ severity: 'success', summary: 'Success', detail: 'Employee profile created', life: 3000 });
+                getAircraftData();
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Aircraft Added', life: 3000 });
               }
               else {
-                console.log(data);
-                // toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Please try again.', life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
               }
             })
         }
+
+        else {
+          toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
+        }
+
       })
 
     setLoading(false);
@@ -91,17 +107,18 @@ export default function Home() {
       <Toast ref={toast} />
       <div className="flex justify-between mx-4">
         <h1 className="text-3xl font-bold">All Aircrafts</h1>
-        <Button onClick={() => setAddNew(true)} label="Add New" icon="pi pi-plus" className="bg-blue-400 text-white p-1" />
+        <Button onClick={() => setAddNew(true)} label="Add New" icon="pi pi-plus" className=" text-white p-1" />
       </div>
-      <div className='flex justify-around gap-4 flex-wrap mt-4'>
+      <div className='flex justify-around gap-8 flex-wrap mt-4'>
         {
-          aircrafts.map((aircraft) => (
-            <AircraftCard key={aircraft.id} id={aircraft.id} title={aircraft.title} imageSrc={aircraft.imageSrc} imageAlt={aircraft.imageAlt} />
+          allAircraft?.map((aircraft) => (
+            // <AircraftCard key={aircraft.id} id={aircraft.id} title={aircraft.title} imageSrc={aircraft.imageSrc} imageAlt={aircraft.imageAlt} />
+            <AircraftCard key={aircraft._id} aircraft={aircraft} />
           ))
         }
       </div>
 
-      <Dialog header="Add New Aircraft" visible={addNew} onHide={() => setAddNew(false)}
+      <Dialog header="Add New Aircraft" visible={addNew} onHide={() => { setAddNew(false); reset() }}
         style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
         <form onSubmit={handleSubmit(handleAddNewAircraft)} className="flex flex-col gap-2 mt-4">
 
@@ -134,7 +151,7 @@ export default function Home() {
           </div>
 
           <div>
-            <Button type="submit" label="Submit" className="bg-blue-400 text-white w-fit p-1"></Button>
+            <Button type="submit" label="Submit" className="text-white w-fit p-1" loading={loading}></Button>
           </div>
         </form>
       </Dialog>

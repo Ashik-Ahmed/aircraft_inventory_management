@@ -7,20 +7,26 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Controller, useForm } from 'react-hook-form';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
+import { getAircraftById } from '../../../../lib/Aircraft';
+import { Toast } from 'primereact/toast';
 
 const page = ({ params: { id } }) => {
 
+    const toast = useRef(null);
+
+    const [aircraft, setAircraft] = useState(null);
     const [addStock, setAddStock] = useState(false);
     const [editStock, setEditStock] = useState(false);
     const [date, setDate] = useState(null);
     const [selectedUnit, setSelectedUnit] = useState(null);
-
+    const [deleteStock, setDeleteStock] = useState(false);
+    const [image, setImage] = useState(null);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -69,6 +75,18 @@ const page = ({ params: { id } }) => {
         { name: 'Ea' },
     ]
 
+    const getAircraftData = async (id) => {
+        const data = await getAircraftById(id);
+        console.log(data);
+        setAircraft(data?.data);
+    }
+
+    useEffect(() => {
+        if (id) {
+            getAircraftData(id)
+        }
+    }, [id])
+
     const nomenclatureBodyTemplate = (rowData) => {
         return (
             <Link href={`/aircraft/${id}/stock/${rowData?._id}`} className='hover:underline'>{rowData.nomenclature}</Link>
@@ -85,13 +103,56 @@ const page = ({ params: { id } }) => {
         return (
             <div className='flex gap-x-2'>
                 <Button onClick={() => setEditStock(rowData)} icon="pi pi-pencil" size='small' severity='success' />
-                <Button icon="pi pi-trash" size='small' severity='danger' />
+                <Button onClick={() => setDeleteStock(rowData)} icon="pi pi-trash" size='small' severity='danger' />
             </div>
         )
     }
 
-    const handleAddNewStock = (data) => {
-        console.log("Add New Stock", data);
+    const handlePhotoChange = (event) => {
+        setImage(event.target.files[0]);
+    };
+
+    const handleAddNewStock = async (stockData) => {
+        console.log("Add New Stock", stockData);
+        stockData.aircraftId = aircraft?._id
+        const stockPhoto = new FormData();
+        stockPhoto.append('image', image);
+        await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+            method: 'POST',
+            body: stockPhoto
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log("inside imgbb api: ", data);
+
+                if (data?.data?.url) {
+                    stockData.image = data.data.url
+                    fetch('http://localhost:5000/api/v1/stock', {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/json',
+                            // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+                        },
+                        body: JSON.stringify(stockData)
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log(data);
+                            if (data.status == 'Success') {
+                                getAircraftData(id);
+                                toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Stock Added Successfully', life: 3000 });
+                            }
+                            else {
+                                toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+                            }
+                        })
+                }
+
+                else {
+                    toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
+                }
+
+            })
         setAddStock(false);
         setSelectedUnit(null);
         reset();
@@ -104,10 +165,16 @@ const page = ({ params: { id } }) => {
         reset();
     }
 
+    const handleDeleteStock = (data) => {
+        console.log("Delete Stock", data);
+        setDeleteStock(false);
+    }
+
     return (
         <div>
+            <Toast ref={toast} />
             <div className='flex justify-between items-center border shadow-md p-2 bg-white rounded-md'>
-                <p className='text-xl font-bold'>Aircraft {id}</p>
+                <p className='text-xl font-bold'>Aircraft: {aircraft?.aircraftName}</p>
                 <Button label="Add Stock" icon="pi pi-plus" size='small' onClick={() => setAddStock(true)} />
             </div>
             <div className='border shadow-md bg-white rounded-md mt-2 w-ful min-h-[90vh]'>
@@ -120,7 +187,7 @@ const page = ({ params: { id } }) => {
                         <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
                     </IconField>
                 </div>
-                <DataTable value={itemList} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']} responsiveLayout="scroll">
+                <DataTable value={aircraft?.stocks} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']} emptyMessage="No available stocks">
                     <Column field="cardNo" header="Card No"></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
                     <Column field="stockNo" header="Stock/Parts No"></Column>
@@ -133,14 +200,14 @@ const page = ({ params: { id } }) => {
             </div>
 
             {/* Add New Stock Dialog  */}
-            <Dialog header="Add New Stock" visible={addStock} onHide={() => { setAddStock(false); setSelectedUnit(null); }}
+            <Dialog header="Add New Stock" visible={addStock} onHide={() => { setAddStock(false); setSelectedUnit(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddNewStock)} className="flex flex-col gap-2 mt-4">
 
                     {/* <InputText placeholder="Aircraft Name" className="border-2" />
           <InputText placeholder="Aircraft ID" className="border-2" /> */}
                     <div className='w-full'>
-                        <p className='text-lg text-gray-700'>Aircraft Name: <span>{id}</span></p>
+                        <p className='text-lg text-gray-700'>Aircraft Name: <span>{aircraft?.aircraftName}</span></p>
                     </div>
                     <div className='w-full'>
                         <InputText
@@ -191,12 +258,19 @@ const page = ({ params: { id } }) => {
                         {errors.aircraftPhoto?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.aircraftPhoto.message}</span>}
                     </div> */}
 
+
+                    <div className='mt-2'>
+                        <input
+                            {...register("image", { required: "Photo is required" })}
+                            onChange={handlePhotoChange} name='file' type="file" className='w-full border border-violet-600' />
+                        {errors.image?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.image.message}</span>}
+                    </div>
+
                     <div>
-                        <Button type="submit" label="Submit" className="bg-blue-400 text-white w-fit p-1"></Button>
+                        <Button type="submit" label="Submit" size='small'></Button>
                     </div>
                 </form>
             </Dialog>
-
 
 
             {/* Edit Stock Dialog  */}
@@ -207,7 +281,7 @@ const page = ({ params: { id } }) => {
                     {/* <InputText placeholder="Aircraft Name" className="border-2" />
           <InputText placeholder="Aircraft ID" className="border-2" /> */}
                     <div className='w-full'>
-                        <p className='text-lg text-gray-700'>Aircraft Name: <span>{id}</span></p>
+                        <p className='text-lg text-gray-700'>Aircraft Name: <span>{aircraft?.aircraftName}</span></p>
                     </div>
                     <div className='w-full'>
                         <InputText
@@ -259,9 +333,21 @@ const page = ({ params: { id } }) => {
                     </div> */}
 
                     <div>
-                        <Button type="submit" label="Submit" className="bg-blue-400 text-white w-fit p-1"></Button>
+                        <Button type="submit" label="Submit" size='small'></Button>
                     </div>
                 </form>
+            </Dialog>
+
+            {/* Delete Stock Dialog  */}
+            <Dialog header="Delete Stock" visible={deleteStock} onHide={() => setDeleteStock(false)}>
+                <div className="flex flex-col gap-2">
+                    <i className="pi pi-trash rounded-full mx-auto text-red-500 p-2 shadow-lg shadow-red-300" style={{ fontSize: '3rem' }}></i>
+                    <p className='text-lg text-gray-700'>Are you sure you want to delete <span className='text-lg font-semibold'>{deleteStock?.nomenclature}</span>?</p>
+                    <div className='flex justify-end gap-2 mt-4'>
+                        <Button label="Delete" severity='danger' size='small' onClick={() => handleDeleteStock(deleteStock)} />
+                        {/* <Button label="No" icon="pi pi-times" severity='secondary' size='small' onClick={() => setDeleteStock(false)} /> */}
+                    </div>
+                </div>
             </Dialog>
         </div>
     );

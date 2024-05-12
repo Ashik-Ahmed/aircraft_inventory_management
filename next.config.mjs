@@ -4,7 +4,8 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'cdn.jetphotos.com'
+                // hostname: 'cdn.jetphotos.com'
+                hostname: 'i.ibb.co'
             },
         ],
     }
