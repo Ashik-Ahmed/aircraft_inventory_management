@@ -121,8 +121,8 @@ const page = ({ params: { stockId } }) => {
             <Toast ref={toast} />
             <div className='flex justify-between p-4 border shadow-md bg-white rounded-md'>
                 <div>
-                    <h3 className='text-xl uppercase text-gray-700'>Stock Details</h3>
-                    <div className='text-lg mt-4'>
+                    <h3 className='text-lg uppercase text-gray-700'>Stock Details</h3>
+                    <div className='mt-4 flex flex-col gap-2'>
                         <p>Stock: {stock?.nomenclature || 'N/A'}</p>
                         <p>Aircraft Name: {stock?.aircraftId?.aircraftName || 'N/A'}</p>
                         <p>Card No.: {stock?.cardNo || 'N/A'}</p>
@@ -131,8 +131,8 @@ const page = ({ params: { stockId } }) => {
                         <p>Location: {stock?.location || 'N/A'}</p>
                     </div>
                 </div>
-                <div className='border bg-white rounded-md'>
-                    <Image src={stock?.image} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md' />
+                <div className='rounded-md'>
+                    <Image src={stock?.image} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md border' />
                 </div>
             </div>
 
@@ -146,7 +146,7 @@ const page = ({ params: { stockId } }) => {
                     <Column field="quantity" header="Quantity" sortable></Column>
                     <Column field="voucherNo" header="Voucher No" sortable></Column>
                     <Column field="actionStatus" header="Action Status" sortable></Column>
-                    <Column body={expiryDateBodyTemplate} header="Expiry Date" sortable></Column>
+                    <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
                     {/* <Column field="uploadStatus" header="Upload Status"></Column> */}
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
@@ -197,6 +197,11 @@ const page = ({ params: { stockId } }) => {
                             {...register("quantity", { required: "Quantity is required" })}
                             placeholder="Quantity*" type='number' className='w-full border p-1' />
                         {errors.quantity?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.quantity.message}</span>}
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("remarks")}
+                            placeholder="Remarks" type='number' className='w-full border p-1' />
                     </div>
 
                     <div>
