@@ -74,7 +74,7 @@ const page = ({ params: { stockId } }) => {
 
     const expiryDateBodyTemplate = (rowData) => {
         return (
-            <p>{formatDate(rowData?.expiryDate)}</p>
+            rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
         );
     }
 
@@ -165,35 +165,38 @@ const page = ({ params: { stockId } }) => {
                             placeholder="Voucher No.*" className='w-full border p-1' />
                         {errors.voucherNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.voucherNo.message}</span>}
                     </div>
-                    <div>
-                        <Controller
-                            name="expiryDate"
-                            control={control}
-                            render={({ field }) => (
-                                <Calendar
-                                    // value={date}
-                                    // {...register("expiryDate", { required: "Expiry Date is required" })}
-                                    onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
-                                    placeholder={'Expiry Date*'}
-                                    className='w-full p-inputtext-sm'
-                                />
-                            )}
-                        />
-                        {/* {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>} */}
-                    </div>
-                    <div className='w-full'>
-                        <InputText
-                            {...register("quantity", { required: "Quantity is required" })}
-                            placeholder="Quantity*" type='number' className='w-full border p-1' />
-                        {errors.quantity?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.quantity.message}</span>}
-                    </div>
-
                     <div className='w-full'>
                         <Dropdown
                             {...register("actionStatus", { required: "Action Status is required" })}
                             value={actionStatus} onChange={(e) => setActionStatus(e.value)} options={[{ label: 'Received', value: 'Received' }, { label: 'Expenditure', value: 'Expenditure' }]} optionLabel="label"
                             placeholder={"Select action status"} size="small" className="w-full p-dropdown-sm" />
                         {errors.actionStatus?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.actionStatus.message}</span>}
+                    </div>
+
+                    {
+                        actionStatus == 'Received' &&
+                        <div>
+                            <Controller
+                                name="expiryDate"
+                                control={control}
+                                render={({ field }) => (
+                                    <Calendar
+                                        // value={date}
+                                        // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                        onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
+                                        placeholder={'Expiry Date*'}
+                                        className='w-full p-inputtext-sm'
+                                    />
+                                )}
+                            />
+                            {/* {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>} */}
+                        </div>
+                    }
+                    <div className='w-full'>
+                        <InputText
+                            {...register("quantity", { required: "Quantity is required" })}
+                            placeholder="Quantity*" type='number' className='w-full border p-1' />
+                        {errors.quantity?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.quantity.message}</span>}
                     </div>
 
                     <div>
