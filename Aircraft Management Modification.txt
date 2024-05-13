@@ -1,0 +1,5 @@
+Date = 1-Jan-2024
+Delete stock only admin
+Add aircraft = cancel
+stockhistory add user information (Army ID no. of soldiar)
+delete/update stock history within 1 hour by normal user.

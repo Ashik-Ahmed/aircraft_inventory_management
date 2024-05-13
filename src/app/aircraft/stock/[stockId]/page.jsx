@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getStockDetailsById } from '../../../../../lib/Aircraft';
 import Image from 'next/image';
 import { DataTable } from 'primereact/datatable';
@@ -13,11 +13,13 @@ import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from 'primereact/toast';
 
 const page = ({ params: { stockId } }) => {
 
-    const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
+    const toast = useRef(null);
 
+    const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
     const [stock, setStock] = useState(null);
     const [addStockHistory, setAddStockHistory] = useState(false);
@@ -54,6 +56,28 @@ const page = ({ params: { stockId } }) => {
         getStockDetails(stockId)
     }, [stockId])
 
+    function formatDate(dateString) {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const date = new Date(dateString);
+        const day = date.getUTCDate();
+        const month = months[date.getUTCMonth()];
+        const year = date.getUTCFullYear();
+        return `${day}-${month}, ${year}`;
+    }
+
+    const dateBodyTemplate = (rowData) => {
+        return (
+            // <span className="p-column-title">{formatDate(rowData.createdAt)}</span>
+            <p>{formatDate(rowData?.createdAt)}</p>
+        );
+    }
+
+    const expiryDateBodyTemplate = (rowData) => {
+        return (
+            <p>{formatDate(rowData?.expiryDate)}</p>
+        );
+    }
+
     const actionBodyTemplate = (rowData) => {
         return (
             <div className='flex gap-x-2'>
@@ -65,12 +89,36 @@ const page = ({ params: { stockId } }) => {
 
     const handleAddStockHistory = (stockHistory) => {
         console.log(stockHistory);
+        stockHistory.stockId = stockId;
+
+        fetch(`http://localhost:5000/api/v1/stockHistory`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(stockHistory)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.status == 'Success') {
+                    getStockDetails(stockId);
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
+                }
+                else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                }
+            })
+
+        setActionStatus(null);
+        setExpiryDate(null);
         setAddStockHistory(false);
         reset();
     }
 
     return (
         <div>
+            <Toast ref={toast} />
             <div className='flex justify-between p-4 border shadow-md bg-white rounded-md'>
                 <div>
                     <h3 className='text-xl uppercase text-gray-700'>Stock Details</h3>
@@ -94,11 +142,11 @@ const page = ({ params: { stockId } }) => {
                     <Button onClick={() => setAddStockHistory(true)} icon="pi pi-plus" size='small' text aria-label='Add' />
                 </div>
                 <DataTable value={stock?.stockHistory} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['date', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
-                    <Column field="date" header="Date" sortable></Column>
+                    <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
                     <Column field="voucherNo" header="Voucher No" sortable></Column>
-                    <Column field="actionStatus" header="Action" sortable></Column>
-                    <Column field='expiryDate' header="Expiry Date" sortable></Column>
+                    <Column field="actionStatus" header="Action Status" sortable></Column>
+                    <Column body={expiryDateBodyTemplate} header="Expiry Date" sortable></Column>
                     {/* <Column field="uploadStatus" header="Upload Status"></Column> */}
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
@@ -113,13 +161,13 @@ const page = ({ params: { stockId } }) => {
           <InputText placeholder="Aircraft ID" className="border-2" /> */}
                     <div className='w-full'>
                         <InputText
-                            {...register("voucerNo", { required: "Voucher No. is required" })}
+                            {...register("voucherNo", { required: "Voucher No. is required" })}
                             placeholder="Voucher No.*" className='w-full border p-1' />
-                        {errors.voucerNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.voucerNo.message}</span>}
+                        {errors.voucherNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.voucherNo.message}</span>}
                     </div>
                     <div>
                         <Controller
-                            name="date"
+                            name="expiryDate"
                             control={control}
                             render={({ field }) => (
                                 <Calendar

@@ -29,6 +29,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         cardNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
         nomenclature: { value: null, matchMode: FilterMatchMode.CONTAINS },
         stockNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        quantity: { value: null, matchMode: FilterMatchMode.CONTAINS },
         uploadStatus: { value: null, matchMode: FilterMatchMode.CONTAINS }
     });
 
@@ -41,6 +42,21 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         { name: 'Meter' },
         { name: 'Set' },
         { name: 'Ea' },
+    ]
+
+
+    const itemList = [
+        { _id: '1', cardNo: 'LP/01', nomenclature: 'Aerocell liquid', stockNo: '20MMM2024', unit: 'Litre', quantity: 2000, expiredDate: '2024-12-22', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '2', cardNo: 'LP/02', nomenclature: 'Lubricant liquid', stockNo: '12XT2024', unit: 'Litre', quantity: 80, expiredDate: '2025-12-01', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '3', cardNo: 'LP/04', nomenclature: 'Bearing ', stockNo: '31MWMM2024', unit: 'Pcs', quantity: 150, expiredDate: '2026-04-18', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '4', cardNo: 'LP/05', nomenclature: 'Electric wire', stockNo: 'NN12M2024', unit: 'Meter', quantity: 500, expiredDate: '2023-05-26', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '5', cardNo: 'LP/06', nomenclature: 'Gear Box', stockNo: '20MMM2024', unit: 'Set', quantity: 30, expiredDate: '2025-01-15', status: 'Low', uploadStatus: 'Uploaded' },
+        { _id: '6', cardNo: 'LP/07', nomenclature: 'Compression Gas Spring', stockNo: '923M2024', unit: 'No.', quantity: 60, expiredDate: '2024-12-22', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '7', cardNo: 'LP/08', nomenclature: 'Gas Spring for Diamond', stockNo: '2HYMM2024', unit: 'No.', quantity: 18, expiredDate: '2024-07-15', status: 'Low', uploadStatus: 'Uploaded' },
+        { _id: '8', cardNo: 'LP/09', nomenclature: 'Screw', stockNo: '20MMM2024', unit: 'Pcs', quantity: 1000, expiredDate: '2024-03-14', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '9', cardNo: 'LP/10', nomenclature: 'Cup, Retainer', stockNo: '9Hb3M2024', unit: 'Pcs', quantity: 50, expiredDate: '2024-08-12', status: 'Sufficient', uploadStatus: 'Uploaded' },
+        { _id: '10', cardNo: 'LP/11', nomenclature: 'Antenna Guide', stockNo: '8TBH12024', unit: 'Pcs', quantity: 20, expiredDate: '2024-12-22', status: 'Low', uploadStatus: 'Uploaded' },
+        { _id: '11', cardNo: 'LP/12', nomenclature: 'HEAD SET', stockNo: '86S9M2024', unit: 'Pcs', quantity: 120, expiredDate: '2024-05-30', status: 'Sufficient', uploadStatus: 'Uploaded' },
     ]
 
     const onGlobalFilterChange = (e) => {
@@ -105,13 +121,13 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                         <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
                     </IconField>
                 </div>
-                <DataTable value={aircraft?.stocks} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus']} emptyMessage="No available stocks">
+                <DataTable value={aircraft?.stocks} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus', 'quantity']} emptyMessage="No available stocks">
                     <Column field="cardNo" header="Card No"></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
-                    <Column field="stockNo" header="Stock/Parts No"></Column>
+                    <Column field="stockNo" header="Stock/Parts No" sortable></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
                     <Column field="expiredDate" header="Latest Expire" sortable></Column>
-                    <Column body={statusBodyTemplate} header="Status"></Column>
+                    <Column body={statusBodyTemplate} header="Status" sortField='status' sortable></Column>
                     {/* <Column field="uploadStatus" header="Upload Status"></Column> */}
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
