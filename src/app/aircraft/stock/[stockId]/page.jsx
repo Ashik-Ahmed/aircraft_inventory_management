@@ -130,6 +130,7 @@ const page = ({ params: { stockId } }) => {
                         <p>Card No.: {stock?.cardNo || 'N/A'}</p>
                         <p>Stock/Part No.: {stock?.stockNo || 'N/A'}</p>
                         <p>Unit: {stock?.unit || 'N/A'}</p>
+                        <p>Issued At: {stock?.issuedAt ? formatDate(stock?.issuedAt) : 'N/A'}</p>
                         <p>Location: {stock?.location || 'N/A'}</p>
                     </div>
                 </div>

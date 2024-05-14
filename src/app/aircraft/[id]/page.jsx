@@ -170,13 +170,13 @@ const page = ({ params: { id } }) => {
                             placeholder="Location" className='w-full p-inputtext-sm' />
                     </div>
                     <Controller
-                        name="date"
+                        name="issuedAt"
                         control={control}
                         render={({ field }) => (
                             <Calendar
                                 // value={date}
                                 onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
-                                placeholder='Date'
+                                placeholder='Issue date'
                                 className='w-full p-inputtext-sm'
                             />
                         )}
