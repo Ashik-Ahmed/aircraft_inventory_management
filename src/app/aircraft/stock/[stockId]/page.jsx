@@ -14,6 +14,8 @@ import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
 
 const page = ({ params: { stockId } }) => {
 
@@ -29,7 +31,7 @@ const page = ({ params: { stockId } }) => {
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        date: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        createdAt: { value: null, matchMode: FilterMatchMode.CONTAINS },
         quantity: { value: null, matchMode: FilterMatchMode.CONTAINS },
         voucherNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
         actionStatus: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -62,7 +64,7 @@ const page = ({ params: { stockId } }) => {
         const day = date.getUTCDate();
         const month = months[date.getUTCMonth()];
         const year = date.getUTCFullYear();
-        return `${day}-${month}, ${year}`;
+        return `${day + 1}-${month}-${year}`;
     }
 
     const dateBodyTemplate = (rowData) => {
@@ -137,11 +139,18 @@ const page = ({ params: { stockId } }) => {
             </div>
 
             <div className='bg-white mt-4 shadow-md p-2 rounded-md'>
-                <div className='m-2 flex items-center gap-x-2'>
-                    <h3 className='text-lg uppercase text-gray-700'>Stock History</h3>
-                    <Button onClick={() => setAddStockHistory(true)} icon="pi pi-plus" size='small' text aria-label='Add' />
+                <div className='flex justify-between items-center'>
+                    <div className='m-2 flex items-center gap-x-2'>
+                        <h3 className='text-lg uppercase text-gray-700'>Stock History</h3>
+                        <Button onClick={() => setAddStockHistory(true)} icon="pi pi-plus" size='small' text aria-label='Add' />
+                    </div>
+
+                    <IconField iconPosition="left">
+                        <InputIcon className="pi pi-search" />
+                        <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
+                    </IconField>
                 </div>
-                <DataTable value={stock?.stockHistory} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['date', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
+                <DataTable value={stock?.stockHistory} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['createdAt', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
                     <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
                     <Column field="voucherNo" header="Voucher No" sortable></Column>
