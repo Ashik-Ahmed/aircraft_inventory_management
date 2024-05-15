@@ -22,6 +22,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
     const [editStock, setEditStock] = useState(false);
     const [deleteStock, setDeleteStock] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
+    const [date, setDate] = useState(null);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -69,6 +70,15 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         setGlobalFilterValue(value);
     };
 
+    function formatDate(dateString) {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const date = new Date(dateString);
+        const day = date.getUTCDate();
+        const month = months[date.getUTCMonth()];
+        const year = date.getUTCFullYear();
+        return `${day + 1}-${month}-${year}`;
+    }
+
     const handleUpdateStock = (updatedStockData) => {
         console.log("Update Stock", updatedStockData);
         setEditStock(false);
@@ -93,9 +103,15 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         );
     }
 
+    const latestExpiryBodyTemplate = (rowData) => {
+        return (
+            <p>{rowData?.latestExpiry ? formatDate(rowData?.latestExpiry) : 'N/A'}</p>
+        );
+    }
+
     const statusBodyTemplate = (rowData) => {
         return (
-            <span className={`text-white p-1 rounded ${rowData.status === 'Sufficient' ? 'bg-green-400' : 'bg-red-400'}`}>{rowData.status}</span>
+            <p>{rowData?.quantity > 10 ? <span className='text-white p-1 rounded bg-green-400'>Sufficient</span> : <span className='text-white p-1 rounded bg-red-400'>Low</span>}</p>
         );
     }
 
@@ -126,8 +142,8 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
                     <Column field="stockNo" header="Stock/Parts No" sortable></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
-                    <Column field="expiredDate" header="Latest Expire" sortable></Column>
-                    <Column body={statusBodyTemplate} header="Status" sortField='status' sortable></Column>
+                    <Column body={latestExpiryBodyTemplate} header="Latest Expire" sortField='latestExpiry' sortable></Column>
+                    <Column body={statusBodyTemplate} header="Status"></Column>
                     {/* <Column field="uploadStatus" header="Upload Status"></Column> */}
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
@@ -170,13 +186,13 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                             placeholder={editStock?.location || "Location"} className='w-full p-inputtext-sm' />
                     </div>
                     <Controller
-                        name="date"
+                        name="issuedAt"
                         control={control}
                         render={({ field }) => (
                             <Calendar
                                 // value={date}
                                 onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
-                                placeholder={editStock?.date || 'Date'}
+                                placeholder={editStock?.issuedAt?.split("T")[0] || 'Issue date'}
                                 className='w-full p-inputtext-sm'
                             />
                         )}

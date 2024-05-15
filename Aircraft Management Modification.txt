@@ -3,3 +3,18 @@ Delete stock only admin
 Add aircraft = cancel. Only Admin can Add Aircraft
 stockhistory add user information (Army ID no. of soldiar)
 delete/update stock history within 1 hour by normal user.
+
+
+
+
+
+
+
+
+
+
+
+
+Queries:
+------------
+1. How to manage stock history expiry date and how to idenify which expiry date stock is being expenditured?

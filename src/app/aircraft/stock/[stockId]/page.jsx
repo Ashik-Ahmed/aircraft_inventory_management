@@ -90,8 +90,8 @@ const page = ({ params: { stockId } }) => {
     }
 
     const handleAddStockHistory = (stockHistory) => {
-        console.log(stockHistory);
         stockHistory.stockId = stockId;
+        console.log(stockHistory);
 
         fetch(`http://localhost:5000/api/v1/stockHistory`, {
             method: 'POST',
