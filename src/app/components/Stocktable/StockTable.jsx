@@ -96,10 +96,10 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.status == 'Success') {
-                    // toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock Updated Successfully', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock Updated Successfully', life: 3000 });
                 }
                 else {
-                    // toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
                 }
                 getAircraftData(id);
             })
