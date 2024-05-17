@@ -59,7 +59,7 @@ const page = ({ params: { id } }) => {
 
     const getAircraftData = async (id) => {
         const data = await getStocksByAircraftId(id);
-        console.log(data?.data[0]);
+        console.log(data);
         setAircraft(data?.data[0]);
     }
 

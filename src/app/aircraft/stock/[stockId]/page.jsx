@@ -27,6 +27,7 @@ const page = ({ params: { stockId } }) => {
     const [addStockHistory, setAddStockHistory] = useState(false);
     const [actionStatus, setActionStatus] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -90,6 +91,7 @@ const page = ({ params: { stockId } }) => {
     }
 
     const handleAddStockHistory = (stockHistory) => {
+        setLoading(true);
         stockHistory.stockId = stockId;
         console.log(stockHistory);
 
@@ -112,6 +114,7 @@ const page = ({ params: { stockId } }) => {
                 }
             })
 
+        setLoading(false);
         setActionStatus(null);
         setExpiryDate(null);
         setAddStockHistory(false);
@@ -215,7 +218,7 @@ const page = ({ params: { stockId } }) => {
                     </div>
 
                     <div>
-                        <Button type="submit" label="Submit" className="text-white w-fit p-1"></Button>
+                        <Button type="submit" label="Submit" loading={loading} className="text-white w-fit p-1"></Button>
                     </div>
                 </form>
             </Dialog>

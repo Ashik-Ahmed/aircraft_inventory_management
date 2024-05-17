@@ -7,15 +7,18 @@ import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { deleteStockById } from '../../../../lib/Aircraft';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import Link from 'next/link';
 import { FilterMatchMode } from 'primereact/api';
+import { Toast } from 'primereact/toast';
 
 const StockTable = ({ aircraft, id, getAircraftData }) => {
+
+    const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
@@ -80,7 +83,27 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
     }
 
     const handleUpdateStock = (updatedStockData) => {
-        console.log("Update Stock", updatedStockData);
+        console.log("Stock", editStock?._id);
+        console.log("Updated Stock", updatedStockData);
+
+        fetch(`http://localhost:3000/api/stock/${editStock?._id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedStockData),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status == 'Success') {
+                    // toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock Updated Successfully', life: 3000 });
+                }
+                else {
+                    // toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                }
+                getAircraftData(id);
+            })
+
         setEditStock(false);
         setSelectedUnit(null);
         reset();
@@ -126,7 +149,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
 
     return (
         <div>
-
+            <Toast ref={toast} />
             <div className='border shadow-md bg-white rounded-md mt-2 w-ful min-h-[90vh]'>
                 <div className="flex justify-between m-2 items-center">
                     <div>
