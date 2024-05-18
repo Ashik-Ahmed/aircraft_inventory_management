@@ -10,6 +10,7 @@ import { Toast } from "primereact/toast";
 import { getAllAircraft } from "../../lib/Aircraft";
 import Cookies from "universal-cookie";
 import Login from "./components/Login/Login";
+import { getLoggedInUser } from "../../lib/User";
 
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
 
   const toast = useRef(null);
 
+  const [user, setUser] = useState({});
   const [allAircraft, setAllAircraft] = useState([]);
   const [addNew, setAddNew] = useState(false);
   const [image, setImage] = useState(null);
@@ -44,9 +46,14 @@ export default function Home() {
     console.log(data);
     setAllAircraft(data?.data);
   }
+  const getUser = async (token) => {
+    const user = await getLoggedInUser(token);
+    setUser(user);
+  }
 
   useEffect(() => {
     getAircraftData();
+    getUser(cookie.get('TOKEN'));
   }, []);
 
 
@@ -115,7 +122,7 @@ export default function Home() {
       <Toast ref={toast} />
       <div className="flex justify-between mx-4">
         <h1 className="text-3xl font-bold">All Aircrafts</h1>
-        <Button onClick={() => setAddNew(true)} label="Add New" icon="pi pi-plus" className=" text-white p-1" />
+        {user?.role == "Admin" && <Button onClick={() => setAddNew(true)} label="Add New" icon="pi pi-plus" className=" text-white p-1" />}
       </div>
       <div className='flex justify-around gap-8 flex-wrap mt-4'>
         {

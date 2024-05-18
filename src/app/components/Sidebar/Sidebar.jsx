@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import army_logo from '../../../assets/images/army_logo.png';
 import Image from 'next/image';
 import { FaHome, FaUsersCog } from "react-icons/fa";
@@ -11,14 +11,19 @@ import { FaUserGear } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
 import Cookies from 'universal-cookie';
+import userPhoto from '../../../assets/images/user.png';
+import { getLoggedInUser } from '../../../../lib/User';
 
 
 
 const Sidebar = () => {
 
     const cookie = new Cookies();
+    const router = useRouter()
 
     const currentPath = usePathname();
+
+    const [user, setUser] = useState({});
 
     const menus = [
         { title: 'Dashboard', link: '/', icon: <FaHome /> },
@@ -27,10 +32,22 @@ const Sidebar = () => {
         { title: 'Profile Settings', link: '/profile', icon: <FaUserGear /> },
     ]
 
+    const getUser = async (token) => {
+        const data = await getLoggedInUser(token);
+        setUser(data);
+    }
+
+    useEffect(() => {
+        if (cookie.get('TOKEN')) {
+            getUser(cookie.get('TOKEN'));
+        }
+    }, [])
+
     const handleLogout = () => {
         console.log('Logout');
         cookie.remove('TOKEN')
-        window.location.reload();
+        // window.location.reload();
+        router.replace('/')
     }
 
     if (!cookie.get('TOKEN')) {
@@ -43,10 +60,6 @@ const Sidebar = () => {
         <div className='sticky top-0 min-w-[300px] max-w-[300px] h-screen bg-sky-600 text-gray-700 '>
             <Image src={army_logo} alt='logo' width={100} height={100} className='p-2 mx-auto' />
 
-            <p className='text-white italic ml-4 mt-6 truncate w-[280px] flex items-center gap-x-2'>
-                {/* <FaUserAlt /> */}
-                ashikahmed121@gmail.comasdasdasdasdasdasdasdasds
-            </p>
             <ul className='text-white font-semibold text-lg ml-2 mt-6'>
                 {
                     menus.map((menu, index) => (
@@ -58,12 +71,17 @@ const Sidebar = () => {
                     ))
                 }
 
-
-                <li onClick={() => handleLogout()} className='text-white font-semibold text-lg ml-4 mt-6 flex items-center gap-x-2'>
-                    <FaSignOutAlt />
-                    Logout
-                </li>
             </ul >
+            <div className='text-white font-semibold flex items-center gap-x-2 mt-44 ml-4'>
+                <Image src={user?.photo || userPhoto} alt='user' width={30} height={30} className='rounded-full border' />
+                <div>
+                    <p>{user?.name}</p>
+                    <p className='text-gray-300 text-xs italic'>{user?.email}</p>
+                </div>
+                <p onClick={() => handleLogout()} className='text-white font-semibold text-3xl ml-4 hover:cursor-pointer'>
+                    <FaSignOutAlt />
+                </p>
+            </div>
         </div >
     );
 };
