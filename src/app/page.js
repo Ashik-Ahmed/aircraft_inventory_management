@@ -8,9 +8,13 @@ import { InputText } from "primereact/inputtext";
 import { useForm } from "react-hook-form";
 import { Toast } from "primereact/toast";
 import { getAllAircraft } from "../../lib/Aircraft";
+import Cookies from "universal-cookie";
+import Login from "./components/Login/Login";
 
 
 export default function Home() {
+
+  const cookie = new Cookies();
 
   const toast = useRef(null);
 
@@ -99,6 +103,10 @@ export default function Home() {
     setAddNew(false);
     setImage(null)
     reset();
+  }
+
+  if (cookie.get('TOKEN') == null) {
+    return <div className="w-fit mx-auto h-screen"><Login /></div>
   }
 
 

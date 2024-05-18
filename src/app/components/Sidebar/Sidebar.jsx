@@ -5,23 +5,39 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import army_logo from '../../../assets/images/army_logo.png';
 import Image from 'next/image';
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaUsersCog } from "react-icons/fa";
 import { TbReport } from "react-icons/tb";
 import { FaUserGear } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaUserAlt } from "react-icons/fa";
+import Cookies from 'universal-cookie';
 
 
 
 const Sidebar = () => {
+
+    const cookie = new Cookies();
 
     const currentPath = usePathname();
 
     const menus = [
         { title: 'Dashboard', link: '/', icon: <FaHome /> },
         { title: 'Report', link: '/report', icon: <TbReport /> },
+        { title: 'Manage Users', link: '/manage-users', icon: <FaUsersCog /> },
         { title: 'Profile Settings', link: '/profile', icon: <FaUserGear /> },
     ]
+
+    const handleLogout = () => {
+        console.log('Logout');
+        cookie.remove('TOKEN')
+        window.location.reload();
+    }
+
+    if (!cookie.get('TOKEN')) {
+        return (
+            <div></div>
+        )
+    }
 
     return (
         <div className='sticky top-0 min-w-[300px] max-w-[300px] h-screen bg-sky-600 text-gray-700 '>
@@ -43,7 +59,7 @@ const Sidebar = () => {
                 }
 
 
-                <li className='text-white font-semibold text-lg ml-4 mt-6 flex items-center gap-x-2'>
+                <li onClick={() => handleLogout()} className='text-white font-semibold text-lg ml-4 mt-6 flex items-center gap-x-2'>
                     <FaSignOutAlt />
                     Logout
                 </li>

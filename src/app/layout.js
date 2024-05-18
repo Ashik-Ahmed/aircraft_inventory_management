@@ -14,6 +14,28 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+
+  // const cookie = new Cookies();
+
+  // const [user, setUser] = useState({})
+
+  // useEffect(() => {
+  //   if (cookie.get('TOKEN')) {
+  //     fetch('http://localhost:5000/api/v1/users/getLoggedInUser', {
+  //       method: 'GET',
+  //       headers: {
+  //         authorization: `Bearer ${cookie.get('TOKEN')}`
+  //       }
+  //     })
+  //       .then(res => res.json())
+  //       .then(data => {
+  //         if (data.user) {
+  //           setUser(data.user)
+  //         }
+  //       })
+  //   }
+  // }, [])
+
   return (
     <html lang="en">
       <PrimeReactProvider>
