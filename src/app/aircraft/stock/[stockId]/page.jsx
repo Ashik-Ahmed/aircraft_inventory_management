@@ -155,7 +155,7 @@ const page = ({ params: { stockId } }) => {
                     <div className='w-full'>
                         <InputText
                             {...register("remarks")}
-                            placeholder="Remarks" type='number' className='w-full border p-1' />
+                            placeholder="Remarks" className='w-full border p-1' />
                     </div>
 
                     <div>
