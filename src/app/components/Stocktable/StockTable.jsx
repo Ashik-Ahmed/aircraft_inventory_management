@@ -82,11 +82,16 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         return `${day + 1}-${month}-${year}`;
     }
 
-    const handleUpdateStock = (updatedStockData) => {
-        console.log("Stock", editStock?._id);
-        console.log("Updated Stock", updatedStockData);
+    const handleUpdateStock = (data) => {
 
-        fetch(`http://localhost:3000/api/stock/${editStock?._id}`, {
+        const updatedStockData = Object.entries(data).reduce((acc, [key, value]) => {
+            if (value) {
+                acc[key] = value;
+            }
+            return acc;
+        }, {});
+
+        fetch(`http://localhost:5000/api/v1/stock/${editStock?._id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,6 +106,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                 else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
                 }
+                console.log(data);
                 getAircraftData(id);
             })
 
