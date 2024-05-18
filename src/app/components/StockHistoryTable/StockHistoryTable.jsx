@@ -11,6 +11,7 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { getDateDifference } from '../../../../utils/dateFunctionality';
 
 const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
 
@@ -65,6 +66,14 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
     const expiryDateBodyTemplate = (rowData) => {
         return (
             rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
+        );
+    }
+
+    const expiryStatusBodyTemplate = (rowData) => {
+        return (
+            rowData?.actionStatus == "Received" ? <p>{getDateDifference(new Date(rowData?.expiryDate), new Date()) > 0 ? <span className='text-white p-1 rounded bg-green-400'>Valid</span> : <span className='text-white p-1 rounded bg-red-400'>Expired</span>}</p>
+                :
+                <p>N/A</p>
         );
     }
 
@@ -159,7 +168,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                     <Column field="voucherNo" header="Voucher No" sortable></Column>
                     <Column field="actionStatus" header="Action Status" sortable></Column>
                     <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
-                    {/* <Column field="uploadStatus" header="Upload Status"></Column> */}
+                    <Column body={expiryStatusBodyTemplate} header="Expiry Status"></Column>
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
             </div>
