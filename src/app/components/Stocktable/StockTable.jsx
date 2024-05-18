@@ -15,6 +15,7 @@ import { InputIcon } from 'primereact/inputicon';
 import Link from 'next/link';
 import { FilterMatchMode } from 'primereact/api';
 import { Toast } from 'primereact/toast';
+import { formatDate } from '../../../../utils/dateFunctionality';
 
 const StockTable = ({ aircraft, id, getAircraftData }) => {
 
@@ -73,14 +74,6 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         setGlobalFilterValue(value);
     };
 
-    function formatDate(dateString) {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const date = new Date(dateString);
-        const day = date.getUTCDate();
-        const month = months[date.getUTCMonth()];
-        const year = date.getUTCFullYear();
-        return `${day + 1}-${month}-${year}`;
-    }
 
     const handleUpdateStock = (data) => {
 

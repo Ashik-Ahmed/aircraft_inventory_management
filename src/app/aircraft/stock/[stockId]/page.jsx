@@ -17,6 +17,7 @@ import { Toast } from 'primereact/toast';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import StockHistoryTable from '@/app/components/StockHistoryTable/StockHistoryTable';
+import { formatDate } from '../../../../../utils/dateFunctionality';
 
 const page = ({ params: { stockId } }) => {
 
@@ -73,14 +74,6 @@ const page = ({ params: { stockId } }) => {
         getStockDetails(stockId)
     }, [stockId])
 
-    function formatDate(dateString) {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const date = new Date(dateString);
-        const day = date.getUTCDate();
-        const month = months[date.getUTCMonth()];
-        const year = date.getUTCFullYear();
-        return `${day + 1}-${month}-${year}`;
-    }
 
     return (
         <div>

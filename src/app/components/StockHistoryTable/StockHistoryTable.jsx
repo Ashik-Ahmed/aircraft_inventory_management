@@ -11,7 +11,7 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { getDateDifference } from '../../../../utils/dateFunctionality';
+import { formatDate, getDateDifference } from '../../../../utils/dateFunctionality';
 
 const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
 
@@ -46,14 +46,6 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
         setGlobalFilterValue(value);
     };
 
-    function formatDate(dateString) {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const date = new Date(dateString);
-        const day = date.getUTCDate();
-        const month = months[date.getUTCMonth()];
-        const year = date.getUTCFullYear();
-        return `${day + 1}-${month}-${year}`;
-    }
 
 
     const dateBodyTemplate = (rowData) => {
