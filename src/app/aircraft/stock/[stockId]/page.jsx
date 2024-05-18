@@ -16,6 +16,7 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
+import StockHistoryTable from '@/app/components/StockHistoryTable/StockHistoryTable';
 
 const page = ({ params: { stockId } }) => {
 
@@ -29,65 +30,11 @@ const page = ({ params: { stockId } }) => {
     const [expiryDate, setExpiryDate] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const [filters, setFilters] = useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        createdAt: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        quantity: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        voucherNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        actionStatus: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        expiryDate: { value: null, matchMode: FilterMatchMode.CONTAINS }
-    });
-
-    const onGlobalFilterChange = (e) => {
-        const value = e.target.value;
-        let _filters = { ...filters };
-
-        _filters['global'].value = value;
-
-        setFilters(_filters);
-        setGlobalFilterValue(value);
-    };
 
     const getStockDetails = async (id) => {
         const data = await getStockDetailsById(id);
         console.log(data);
         setStock(data?.data);
-    }
-
-    useEffect(() => {
-        getStockDetails(stockId)
-    }, [stockId])
-
-    function formatDate(dateString) {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const date = new Date(dateString);
-        const day = date.getUTCDate();
-        const month = months[date.getUTCMonth()];
-        const year = date.getUTCFullYear();
-        return `${day + 1}-${month}-${year}`;
-    }
-
-    const dateBodyTemplate = (rowData) => {
-        return (
-            // <span className="p-column-title">{formatDate(rowData.createdAt)}</span>
-            <p>{formatDate(rowData?.createdAt)}</p>
-        );
-    }
-
-    const expiryDateBodyTemplate = (rowData) => {
-        return (
-            rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
-        );
-    }
-
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <div className='flex gap-x-2'>
-                <Button icon="pi pi-pencil" size='small' severity='success' />
-                <Button icon="pi pi-trash" size='small' severity='danger' />
-            </div>
-        )
     }
 
     const handleAddStockHistory = (stockHistory) => {
@@ -121,6 +68,20 @@ const page = ({ params: { stockId } }) => {
         reset();
     }
 
+
+    useEffect(() => {
+        getStockDetails(stockId)
+    }, [stockId])
+
+    function formatDate(dateString) {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const date = new Date(dateString);
+        const day = date.getUTCDate();
+        const month = months[date.getUTCMonth()];
+        const year = date.getUTCFullYear();
+        return `${day + 1}-${month}-${year}`;
+    }
+
     return (
         <div>
             <Toast ref={toast} />
@@ -142,28 +103,8 @@ const page = ({ params: { stockId } }) => {
                 </div>
             </div>
 
-            <div className='bg-white mt-4 shadow-md p-2 rounded-md'>
-                <div className='flex justify-between items-center'>
-                    <div className='m-2 flex items-center gap-x-2'>
-                        <h3 className='text-lg uppercase text-gray-700'>Stock History</h3>
-                        <Button onClick={() => setAddStockHistory(true)} icon="pi pi-plus" size='small' text aria-label='Add' />
-                    </div>
+            <StockHistoryTable stock={stock} setAddStockHistory={setAddStockHistory} getStockDetails={getStockDetails} />
 
-                    <IconField iconPosition="left">
-                        <InputIcon className="pi pi-search" />
-                        <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
-                    </IconField>
-                </div>
-                <DataTable value={stock?.stockHistory} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['createdAt', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
-                    <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
-                    <Column field="quantity" header="Quantity" sortable></Column>
-                    <Column field="voucherNo" header="Voucher No" sortable></Column>
-                    <Column field="actionStatus" header="Action Status" sortable></Column>
-                    <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
-                    {/* <Column field="uploadStatus" header="Upload Status"></Column> */}
-                    <Column body={actionBodyTemplate} header="Actions"></Column>
-                </DataTable>
-            </div>
 
             {/* Add Stoc History  */}
             <Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); reset() }}
@@ -222,6 +163,8 @@ const page = ({ params: { stockId } }) => {
                     </div>
                 </form>
             </Dialog>
+
+
         </div>
     );
 };
