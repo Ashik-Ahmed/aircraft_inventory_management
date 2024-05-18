@@ -7,13 +7,17 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useState } from 'react';
-import { formatDate } from '../../../utils/dateFunctionality';
+import { formatDate, getDateDifference } from '../../../utils/dateFunctionality';
+import { Dropdown } from 'primereact/dropdown';
+import { getAllAircraft } from '../../../lib/Aircraft';
+import { exportStockReport } from '../../../utils/ExportPDF';
 
 const Report = () => {
 
-
+    const [allAircraft, setAllAircraft] = useState([]);
     const [selectedAircraft, setSelectedAircraft] = useState(null);
     const [stockReport, setStockReport] = useState(null);
+    const [expiryFilter, setExpiryFilter] = useState(null);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -37,8 +41,9 @@ const Report = () => {
 
     const getStockDetailsReport = (aircraftId) => {
         console.log('Selected Aircraft', aircraftId);
+        console.log('Expiry Filter', expiryFilter);
 
-        fetch(`http://localhost:5000/api/v1/stock?aircraftId=${aircraftId}`)
+        fetch(`http://localhost:5000/api/v1/stock?aircraftId=${aircraftId}&expiryFilter=${expiryFilter}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -47,9 +52,32 @@ const Report = () => {
 
     }
 
+    const getAllAircraftData = async () => {
+        const dummyAircraft = { aircraftName: "All", _id: "" }
+        const allAircraft = await getAllAircraft()
+        console.log(allAircraft?.data);
+        if (allAircraft?.data) {
+            allAircraft?.data.unshift(dummyAircraft);
+        }
+        setAllAircraft(allAircraft?.data);
+    }
+
+    const handleExportStockReport = (stockReport) => {
+
+        const stockDetailsReportData = {
+            aircraft: selectedAircraft?.aircraftName || "All Aircraft",
+            expiryFilter: expiryFilter,
+            stockReport: stockReport
+        }
+
+        exportStockReport(stockDetailsReportData);
+
+    }
+
     useEffect(() => {
+        getAllAircraftData();
         getStockDetailsReport(selectedAircraft?._id);
-    }, [selectedAircraft]);
+    }, [selectedAircraft, expiryFilter]);
 
     const latestExpiryBodyTemplate = (rowData) => {
         return (
@@ -58,7 +86,7 @@ const Report = () => {
     }
     const receivedBodyTemplate = (rowData) => {
         return (
-            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id}>{stock?.quantity}X{formatDate(stock?.createdAt)}</p> : null)
+            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) > 0 && 'text-white rounded bg-red-400'}> {stock?.quantity}X{formatDate(stock?.createdAt)}</ p > : null)
         )
     }
     const expenditureBodyTemplate = (rowData) => {
@@ -69,17 +97,28 @@ const Report = () => {
 
     return (
         <div>
+            <div>
+                <div className='w-1/3 mb-2'>
+                    <Dropdown value={selectedAircraft} onChange={(e) => setSelectedAircraft(e.value)} options={allAircraft} optionLabel="aircraftName" placeholder="Select Aircraft" size="small" className="w-full p-dropdown-sm" />
+                </div>
+            </div>
             <div className='bg-white shadow-md p-2 rounded-md'>
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Stock Report</h3>
-                        {/* <Button onClick={() => setAddStockHistory(true)} icon="pi pi-plus" size='small' text aria-label='Add' /> */}
+                        <Button onClick={() => handleExportStockReport(stockReport)} icon="pi pi-file-pdf" severity='danger' size='small' text aria-label='Export' />
                     </div>
 
-                    <IconField iconPosition="left">
-                        <InputIcon className="pi pi-search" />
-                        <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
-                    </IconField>
+                    <div className='flex gap-x-2 items-center'>
+                        <div>
+                            <Dropdown value={expiryFilter} onChange={(e) => setExpiryFilter(e.value)} options={[{ label: 'All', value: '' }, { label: 'Expired', value: 'Expired' }, { label: 'Not Expired', value: 'Not Expired' }]} optionLabel="label" placeholder="Filter" size="small" className="w-full p-dropdown-sm" />
+                        </div>
+
+                        <IconField iconPosition="left">
+                            <InputIcon className="pi pi-search" />
+                            <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                        </IconField>
+                    </div>
                 </div>
                 <DataTable value={stockReport} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['nomenclature', 'stockNo', 'unit', 'cardNo', 'quantity']} emptyMessage="No stock report">
                     <Column field="nomenclature" header="Nomenclature" sortable></Column>
