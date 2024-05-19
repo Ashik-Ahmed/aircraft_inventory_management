@@ -55,11 +55,11 @@ const Login = () => {
 
         <div className="flex flex-column align-items-center justify-content-center">
             <Toast ref={toast} />
-            {/* <img src="/layout/images/logo-dark.svg" alt="Sakai logo" className="mb-5 w-6rem flex-shrink-0" /> */}
+
             <div className=' w-[600px]' style={{ borderRadius: "56px", padding: "0.3rem", background: "linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)" }}>
                 <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: "53px" }}>
                     <div className="text-center mb-5">
-                        {/* <img src="/demo/images/login/avatar.png" alt="Image" height="50" className="mb-3" /> */}
+
                         <div className="text-900 text-3xl font-medium mb-3">Hi, Welcome!</div>
                         <span className="text-600 font-medium">Sign in to continue</span>
                     </div>

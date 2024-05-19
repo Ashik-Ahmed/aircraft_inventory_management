@@ -12,6 +12,7 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import UserTable from '../components/ManageUsers/UserTable';
 
 const ManageUsers = () => {
 
@@ -24,6 +25,7 @@ const ManageUsers = () => {
     const [loading, setLoading] = useState(false);
     const [role, setRole] = useState([]);
     const [image, setImage] = useState(null);
+
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -114,14 +116,6 @@ const ManageUsers = () => {
         setLoading(false);
     }
 
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <div className='flex gap-x-2'>
-                <Button icon="pi pi-pencil" size='small' severity='success' />
-                <Button icon="pi pi-trash" size='small' severity='danger' />
-            </div>
-        )
-    }
 
     return (
         <div>
@@ -139,12 +133,7 @@ const ManageUsers = () => {
                             <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
                         </IconField>
                     </div>
-                    <DataTable value={users} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['name', 'email', 'role']} emptyMessage="No user found">
-                        <Column field="name" header="Name" sortable></Column>
-                        <Column field="email" header="Email" sortable></Column>
-                        <Column field="role" header="User Role" sortable></Column>
-                        <Column body={actionBodyTemplate} header="Actions"></Column>
-                    </DataTable>
+                    <UserTable users={users} filters={filters} getAllUser={getAllUser} />
                 </div>
 
                 {/* Create user dialog  */}

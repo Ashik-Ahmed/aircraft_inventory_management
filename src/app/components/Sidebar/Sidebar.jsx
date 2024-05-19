@@ -26,7 +26,7 @@ const Sidebar = () => {
     const [user, setUser] = useState({});
 
     const menus = [
-        { title: 'Dashboard', link: '/', icon: <FaHome /> },
+        // { title: 'Dashboard', link: '/', icon: <FaHome /> },
         { title: 'Report', link: '/report', icon: <TbReport /> },
         { title: 'Manage Users', link: '/manage-users', icon: <FaUsersCog /> },
         { title: 'Profile Settings', link: '/profile', icon: <FaUserGear /> },
@@ -60,7 +60,12 @@ const Sidebar = () => {
         <div className='sticky top-0 min-w-[300px] max-w-[300px] h-screen bg-sky-600 text-gray-700 '>
             <Image src={army_logo} alt='logo' width={100} height={100} className='p-2 mx-auto' />
 
-            <ul className='text-white font-semibold text-lg ml-2 mt-6'>
+            <div className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'} text-white font-semibold text-lg py-2 hover:tracking-wider hover:border-r-2 hover:border-r-violet-500  duration-200 cursor-pointer flex gap-x-4 items-center px-4 ml-2`}>
+                <FaHome className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'}`} />
+                <Link href='/' className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'}`}> Dashboard </Link>
+
+            </div>
+            <ul className='text-white font-semibold text-lg ml-2'>
                 {
                     menus.map((menu, index) => (
 
