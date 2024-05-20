@@ -28,6 +28,8 @@ const page = ({ params: { id } }) => {
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [deleteStock, setDeleteStock] = useState(false);
     const [image, setImage] = useState(null);
+    const [cards, setCards] = useState([])
+    const [selectedCard, setSelectedCard] = useState(null)
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
@@ -63,10 +65,27 @@ const page = ({ params: { id } }) => {
         setAircraft(data?.data[0]);
     }
 
+    const getAllCards = async () => {
+        fetch('http://localhost:5000/api/v1/cardInfo', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.status === 'Success') {
+                    setCards(data?.data);
+                }
+            })
+    }
+
     useEffect(() => {
         if (id) {
             getAircraftData(id)
         }
+        getAllCards()
     }, [id])
 
 
@@ -139,16 +158,23 @@ const page = ({ params: { id } }) => {
                     <div className='w-full'>
                         <p className='text-lg text-gray-700'>Aircraft Name: <span>{aircraft?.aircraftName}</span></p>
                     </div>
-                    <div className='w-full'>
+                    {/* <div className='w-full'>
                         <InputText
                             {...register("cardNo", { required: "Card No. is required" })}
                             placeholder="Card No.*" className='w-full p-inputtext-sm' />
+                        {errors.cardNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.cardNo.message}</span>}
+                    </div> */}
+                    <div className='w-full'>
+                        <Dropdown
+                            {...register("cardNo", { required: "Card No. is required" })}
+                            value={selectedCard} onChange={(e) => setSelectedCard(e.value)} options={cards} optionLabel="cardNo"
+                            placeholder="Select a Card" size="small" className="w-full p-dropdown-sm" />
                         {errors.cardNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.cardNo.message}</span>}
                     </div>
                     <div className='w-full'>
                         <InputText
                             {...register("stockNo", { required: "Stock/Parts No. is required" })}
-                            placeholder="Stock/Parts No.*" className='w-full p-inputtext-sm' />
+                            placeholder="Stock/Parts No.*" value={selectedCard?.stockNo} className='w-full p-inputtext-sm' />
                         {errors.stockNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.stockNo.message}</span>}
                     </div>
                     <div className='w-full'>
@@ -161,7 +187,7 @@ const page = ({ params: { id } }) => {
                     <div className='w-full'>
                         <InputText
                             {...register("nomenclature", { required: "Nomenclature is required" })}
-                            placeholder="Nomenclature*" className='w-full p-inputtext-sm' />
+                            placeholder="Nomenclature*" value={selectedCard?.nomenclature} className='w-full p-inputtext-sm' />
                         {errors.nomenclature?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.nomenclature.message}</span>}
                     </div>
                     <div className='w-full'>
