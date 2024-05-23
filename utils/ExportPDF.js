@@ -4,19 +4,20 @@ exports.exportStockReport = async (stockDetailsReport) => {
     console.log('Exporting Stock Report', stockDetailsReport);
 
     const cols = [
-        { field: 'nomenclature', header: 'Nomenclature' },
-        { field: 'stockNo', header: 'Part No.' },
-        { field: 'unit', header: 'A/U' },
+        { field: 'serial', header: 'Ser.' },
         { field: 'cardNo', header: 'Card No.' },
-        { field: 'quantity', header: 'Quantity' },
+        { field: 'stockNo', header: 'Part No.' },
+        { field: 'nomenclature', header: 'Nomenclature' },
+        { field: 'unit', header: 'A/U' },
+        { field: 'quantity', header: 'Qty Balance' },
+        { field: 'received', header: 'Received & Dt' },
+        { field: 'expenditure', header: 'Expenditure & Dt' },
         { field: 'latestExpiry', header: 'Latest Expiry' },
-        { field: 'received', header: 'Received' },
-        { field: 'expenditure', header: 'Expenditure' },
     ]
 
     const exportColumns = cols.map(col => ({ title: col.header, dataKey: col.field }))
 
-    let customizedStockReport = stockDetailsReport?.stockReport?.map((stock) => {
+    let customizedStockReport = stockDetailsReport?.stockReport?.map((stock, index) => {
         const customizedlatestExpiry = stock?.latestExpiry ? formatDate(stock?.latestExpiry) : 'N/A';
         const customizedReceived = stock?.stockHistory?.filter((history) => history?.actionStatus == 'Received')
             .map((stock) => `${stock?.quantity}X${formatDate(stock?.createdAt)}`)
@@ -24,7 +25,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
         const customizedExpenditure = stock?.stockHistory?.filter((history) => history?.actionStatus == 'Expenditure')
             .map((stock) => `${stock?.quantity}X${formatDate(stock?.createdAt)}`)
             .join('\n');
-        return { ...stock, latestExpiry: customizedlatestExpiry, received: customizedReceived, expenditure: customizedExpenditure }
+        return { serial: index + 1, ...stock, latestExpiry: customizedlatestExpiry, received: customizedReceived, expenditure: customizedExpenditure }
     })
 
 

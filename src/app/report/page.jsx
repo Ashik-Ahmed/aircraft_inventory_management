@@ -86,14 +86,22 @@ const Report = () => {
         getStockDetailsReport(selectedAircraft?._id);
     }, [selectedAircraft, expiryFilter]);
 
+    const stockReportData = stockReport?.map((item, index) => {
+        return {
+            serial: index + 1, // Add serial number property starting from 1
+            ...item
+        };
+    });
+
     const latestExpiryBodyTemplate = (rowData) => {
         return (
             rowData?.latestExpiry ? <p>{formatDate(rowData?.latestExpiry)}</p> : 'N/A'
         )
     }
     const receivedBodyTemplate = (rowData) => {
+        console.log('Row Data', rowData);
         return (
-            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) < 90 && 'text-white rounded bg-red-400'}> {stock?.quantity}X{formatDate(stock?.createdAt)}</ p > : null)
+            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) < -30 ? 'text-white rounded bg-yellow-400' : (getDateDifference(new Date(), new Date(stock?.expiryDate)) > 1 && 'text-white rounded bg-red-400')}> {stock?.quantity}X{formatDate(stock?.createdAt)}</ p > : null)
         )
     }
     const expenditureBodyTemplate = (rowData) => {
@@ -104,11 +112,11 @@ const Report = () => {
 
     return (
         <div>
-            <div>
+            {/* <div>
                 <div className='w-1/3 mb-2'>
                     <Dropdown value={selectedAircraft} onChange={(e) => setSelectedAircraft(e.value)} options={allAircraft} optionLabel="aircraftName" placeholder="Select Aircraft" size="small" className="w-full p-dropdown-sm" />
                 </div>
-            </div>
+            </div> */}
             <div className='bg-white shadow-md p-2 rounded-md'>
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
@@ -155,8 +163,8 @@ const Report = () => {
                         </IconField>
                     </div>
                 </div>
-                <DataTable value={stockReport} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['nomenclature', 'stockNo', 'unit', 'cardNo', 'quantity']} emptyMessage="No stock report">
-                    {/* <Column field="" header="Ser No." sortable></Column> */}
+                <DataTable value={stockReportData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['nomenclature', 'stockNo', 'unit', 'cardNo', 'quantity']} emptyMessage="No stock report">
+                    <Column field="serial" header="Ser No." sortable></Column>
                     <Column field="cardNo" header="Card No." sortable></Column>
                     <Column field="stockNo" header="Part No" sortable></Column>
                     <Column field="nomenclature" header="Nomenclature" sortable></Column>

@@ -58,7 +58,7 @@ const Sidebar = () => {
     }
 
     return (
-        <div className='sticky top-0 min-w-[300px] max-w-[300px] h-screen bg-sky-600 text-gray-700 '>
+        <div className='sticky top-0 min-w-[250px] max-w-[250px] h-screen bg-sky-600 text-gray-700 '>
             <Image src={logo} alt='logo' width={150} height={150} className='p-2 mx-auto' />
 
             <div className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'} text-white font-semibold text-lg py-2 hover:tracking-wider hover:border-r-2 hover:border-r-violet-500  duration-200 cursor-pointer flex gap-x-4 items-center px-4 ml-2`}>
