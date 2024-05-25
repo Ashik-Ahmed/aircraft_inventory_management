@@ -5,11 +5,11 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import logo from '../../../assets/images/logo.jpg';
 import Image from 'next/image';
-import { FaHome, FaUsersCog } from "react-icons/fa";
+import { FaHelicopter, FaHome, FaUsersCog } from "react-icons/fa";
 import { TbReport } from "react-icons/tb";
 import { FaUserGear } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
-import { FaUserAlt } from "react-icons/fa";
+import { BsPostcard } from "react-icons/bs";
 import Cookies from 'universal-cookie';
 import userPhoto from '../../../assets/images/user.png';
 import { getLoggedInUser } from '../../../../lib/User';
@@ -28,7 +28,8 @@ const Sidebar = () => {
     const menus = [
         // { title: 'Dashboard', link: '/', icon: <FaHome /> },
         { title: 'Report', link: '/report', icon: <TbReport /> },
-        { title: 'Card Management', link: '/card-management', icon: <TbReport /> },
+        { title: 'Manage Aircraft', link: '/manage-aircraft', icon: <FaHelicopter /> },
+        { title: 'Card Management', link: '/card-management', icon: <BsPostcard /> },
         { title: 'Manage Users', link: '/manage-users', icon: <FaUsersCog /> },
         { title: 'Profile Settings', link: '/profile', icon: <FaUserGear /> },
     ]
@@ -47,8 +48,8 @@ const Sidebar = () => {
     const handleLogout = () => {
         console.log('Logout');
         cookie.remove('TOKEN')
-        // window.location.reload();
         router.replace('/')
+        window.location.reload();
     }
 
     if (!cookie.get('TOKEN')) {
@@ -61,7 +62,7 @@ const Sidebar = () => {
         <div className='sticky top-0 min-w-[250px] max-w-[250px] h-screen bg-sky-600 text-gray-700 '>
             <Image src={logo} alt='logo' width={150} height={150} className='p-2 mx-auto' />
 
-            <div className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'} text-white font-semibold text-lg py-2 hover:tracking-wider hover:border-r-2 hover:border-r-violet-500  duration-200 cursor-pointer flex gap-x-4 items-center px-4 ml-2`}>
+            <div className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'} text-white font-semibold text-lg py-2 hover:tracking-wider hover:border-r-2 hover:border-r-violet-500  duration-200 cursor-pointer flex gap-x-4 items-center px-4 ml-2 mt-4`}>
                 <FaHome className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'}`} />
                 <Link href='/' className={`${currentPath === '/' && 'font-bold bg-white text-sky-600 rounded-l-3xl'}`}> Dashboard </Link>
 
@@ -84,9 +85,10 @@ const Sidebar = () => {
                     <p>{user?.name}</p>
                     <p className='text-gray-300 text-xs italic'>{user?.email}</p>
                 </div>
-                <p onClick={() => handleLogout()} className='text-white font-semibold text-3xl ml-4 hover:cursor-pointer'>
-                    <FaSignOutAlt />
-                </p>
+            </div>
+            <div onClick={() => handleLogout()} className='flex items-center gap-x-4 text-white ml-4 hover:cursor-pointer mt-4'>
+                <FaSignOutAlt size={25} />
+                <p className='text-lg font-semibold'>Signout</p>
             </div>
         </div >
     );

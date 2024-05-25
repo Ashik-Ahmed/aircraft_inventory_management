@@ -140,8 +140,8 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
     const actionBodyTemplate = (rowData) => {
         return (
             <div className='flex gap-x-2'>
-                <Button onClick={() => setEditStock(rowData)} icon="pi pi-pencil" size='small' severity='success' />
-                <Button onClick={() => setDeleteStock(rowData)} icon="pi pi-trash" size='small' severity='danger' />
+                <Button onClick={() => setEditStock(rowData)} label='Edit' icon="pi pi-pencil" size='small' severity='success' />
+                <Button onClick={() => setDeleteStock(rowData)} label='Delete' icon="pi pi-trash" size='small' severity='danger' />
             </div>
         )
     }

@@ -28,8 +28,11 @@ const page = ({ params: { stockId } }) => {
     const [stock, setStock] = useState(null);
     const [addStockHistory, setAddStockHistory] = useState(false);
     const [actionStatus, setActionStatus] = useState(null);
+    const [itemType, setItemType] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [allAircraftUnit, setAllAircraftUnit] = useState([]);
+    const [selectedAircraftUnit, setSelectedAircraftUnit] = useState(null);
 
 
     const getStockDetails = async (id) => {
@@ -69,11 +72,41 @@ const page = ({ params: { stockId } }) => {
         reset();
     }
 
+    const getAllAircraftUnit = async () => {
+        const data = await fetch('http://localhost:5000/api/v1/aircraftUnit');
+        const res = await data.json();
+        console.log(res);
+        setAllAircraftUnit(res.data);
+    }
+
 
     useEffect(() => {
-        getStockDetails(stockId)
+        getStockDetails(stockId);
+        getAllAircraftUnit();
     }, [stockId])
 
+
+    const aircraftUnitOptionTemplate = (option) => {
+        return (
+            <div>
+                <p>{option.aircraftName}</p>
+                <p className='text-xs'>Reg:{option.regNo}, Serial: {option.serialNo}</p>
+            </div>
+        );
+    };
+
+    const selectedAircraftUnitOptionTemplate = (option, props) => {
+        if (option) {
+            return (
+                <div>
+                    <p>{option.aircraftName}</p>
+                    <p className='text-xs'>Reg:{option.regNo}, Serial: {option.serialNo}</p>
+                </div>
+            );
+        }
+
+        return <span>{props.placeholder}</span>;
+    };
 
     return (
         <div>
@@ -100,12 +133,13 @@ const page = ({ params: { stockId } }) => {
 
 
             {/* Add Stoc History  */}
-            <Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); reset() }}
+            <Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); setSelectedAircraftUnit(null); setItemType(null); setActionStatus(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddStockHistory)} className="flex flex-col gap-2 mt-4">
 
                     {/* <InputText placeholder="Aircraft Name" className="border-2" />
           <InputText placeholder="Aircraft ID" className="border-2" /> */}
+
                     <div className='w-full'>
                         <InputText
                             {...register("voucherNo", { required: "Voucher No. is required" })}
@@ -114,31 +148,48 @@ const page = ({ params: { stockId } }) => {
                     </div>
                     <div className='w-full'>
                         <Dropdown
-                            {...register("actionStatus", { required: "Action Status is required" })}
-                            value={actionStatus} onChange={(e) => setActionStatus(e.value)} options={[{ label: 'Received', value: 'Received' }, { label: 'Expenditure', value: 'Expenditure' }]} optionLabel="label"
-                            placeholder={"Select action status"} size="small" className="w-full p-dropdown-sm" />
-                        {errors.actionStatus?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.actionStatus.message}</span>}
+                            {...register("itemType", { required: "Item type is required" })}
+                            value={itemType} onChange={(e) => setItemType(e.value)} options={[{ label: 'New', value: 'New' }, { label: 'Old', value: 'Old' }]} optionLabel="label"
+                            placeholder={"Select item type*"} size="small" className="w-full p-dropdown-sm" />
+                        {errors.itemType?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.itemType.message}</span>}
                     </div>
-
                     {
-                        actionStatus == 'Received' &&
-                        <div>
-                            <Controller
-                                name="expiryDate"
-                                control={control}
-                                render={({ field }) => (
-                                    <Calendar
-                                        // value={date}
-                                        // {...register("expiryDate", { required: "Expiry Date is required" })}
-                                        onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
-                                        placeholder={'Expiry Date*'}
-                                        className='w-full p-inputtext-sm'
-                                    />
-                                )}
-                            />
-                            {/* {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>} */}
+                        itemType === 'New' &&
+                        <div className='w-full'>
+                            <Dropdown
+                                {...register("actionStatus", { required: "Action Status is required" })}
+                                value={actionStatus} onChange={(e) => setActionStatus(e.value)} options={[{ label: 'Received', value: 'Received' }, { label: 'Expenditure', value: 'Expenditure' }]} optionLabel="label"
+                                placeholder={"Select action status*"} size="small" className="w-full p-dropdown-sm" />
+                            {errors.actionStatus?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.actionStatus.message}</span>}
                         </div>
                     }
+                    {
+                        actionStatus === 'Expenditure' &&
+                        <div className='w-full'>
+                            <Dropdown
+                                {...register("aircraftUnit", { required: "Aircraft unit is required" })}
+                                value={selectedAircraftUnit} valueTemplate={selectedAircraftUnitOptionTemplate} itemTemplate={aircraftUnitOptionTemplate} onChange={(e) => setSelectedAircraftUnit(e.value)} options={allAircraftUnit} optionLabel="aircraftName"
+                                placeholder={"Select aircraft unit*"} size="small" className="w-full p-dropdown-sm" />
+                            {errors.aircraftUnit?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.aircraftUnit.message}</span>}
+                        </div>
+                    }
+                    <div>
+                        <Controller
+                            name="expiryDate"
+                            control={control}
+                            render={({ field }) => (
+                                <Calendar
+                                    // value={date}
+                                    // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                    onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
+                                    placeholder={'Expiry Date*'}
+                                    className='w-full p-inputtext-sm'
+                                    required
+                                />
+                            )}
+                        />
+                        {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>}
+                    </div>
                     <div className='w-full'>
                         <InputText
                             {...register("quantity", { required: "Quantity is required" })}

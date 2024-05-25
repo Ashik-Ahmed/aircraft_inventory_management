@@ -126,8 +126,8 @@ const UserTable = ({ users, filters, getAllUser }) => {
     const actionBodyTemplate = (rowData) => {
         return (
             <div className='flex gap-x-2'>
-                <Button onClick={() => setUpdateUser(rowData)} icon="pi pi-pencil" size='small' severity='success' />
-                <Button onClick={() => setDeleteUser(rowData)} icon="pi pi-trash" size='small' severity='danger' />
+                <Button onClick={() => setUpdateUser(rowData)} label='Edit' icon="pi pi-pencil" size='small' severity='success' />
+                <Button onClick={() => setDeleteUser(rowData)} label='Delete' icon="pi pi-trash" size='small' severity='danger' />
             </div>
         )
     }

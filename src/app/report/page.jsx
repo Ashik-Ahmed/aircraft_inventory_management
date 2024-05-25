@@ -22,9 +22,10 @@ const Report = () => {
     const [allAircraft, setAllAircraft] = useState([]);
     const [selectedAircraft, setSelectedAircraft] = useState(null);
     const [stockReport, setStockReport] = useState(null);
-    const [expiryFilter, setExpiryFilter] = useState(null);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    // const [expiryFilter, setExpiryFilter] = useState(null);
+    const [expiryStartDate, setExpiryStartDate] = useState(null);
+    const [expiryEndDate, setExpiryEndDate] = useState(null);
+    const [stockStatus, setStockStatus] = useState(null);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -47,10 +48,15 @@ const Report = () => {
     };
 
     const getStockDetailsReport = (aircraftId) => {
-        console.log('Selected Aircraft', aircraftId);
-        console.log('Expiry Filter', expiryFilter);
-
-        fetch(`http://localhost:5000/api/v1/stock?aircraftId=${aircraftId}&expiryFilter=${expiryFilter}`)
+        // console.log('Selected Aircraft', aircraftId);
+        // console.log('Expiry Filter', expiryFilter);
+        const expiryFilter = {
+            expiryStartDate: expiryStartDate,
+            expiryEndDate: expiryEndDate,
+            stockStatus: stockStatus
+        }
+        console.log(expiryFilter);
+        fetch(`http://localhost:5000/api/v1/stock?aircraftId=${aircraftId}&expiryFilter=${JSON.stringify(expiryFilter)}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -73,7 +79,7 @@ const Report = () => {
 
         const stockDetailsReportData = {
             aircraft: selectedAircraft?.aircraftName || "All Aircraft",
-            expiryFilter: expiryFilter,
+            // expiryFilter: expiryFilter,
             stockReport: stockReport
         }
 
@@ -81,10 +87,15 @@ const Report = () => {
 
     }
 
+    // const handleExpiryFilter = (data) => {
+    //     console.log('Expiry Filter', data);
+    //     setExpiryFilter(data);
+    // }
+
     useEffect(() => {
         getAllAircraftData();
         getStockDetailsReport(selectedAircraft?._id);
-    }, [selectedAircraft, expiryFilter]);
+    }, [selectedAircraft]);
 
     const stockReportData = stockReport?.map((item, index) => {
         return {
@@ -99,9 +110,8 @@ const Report = () => {
         )
     }
     const receivedBodyTemplate = (rowData) => {
-        console.log('Row Data', rowData);
         return (
-            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) < -30 ? 'text-white rounded bg-yellow-400' : (getDateDifference(new Date(), new Date(stock?.expiryDate)) > 1 && 'text-white rounded bg-red-400')}> {stock?.quantity}X{formatDate(stock?.createdAt)}</ p > : null)
+            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) > - 30 && (getDateDifference(new Date(), new Date(stock?.expiryDate)) > 1 ? 'text-white rounded bg-red-400 mb-1' : 'text-white rounded bg-yellow-400 mb-1')} > {stock?.quantity}X{formatDate(stock?.createdAt)}</ p > : null)
         )
     }
     const expenditureBodyTemplate = (rowData) => {
@@ -126,44 +136,51 @@ const Report = () => {
 
                     <div className='flex gap-x-2 items-center'>
 
-                        <div className='flex gap-x-2'>
-                            <Controller
-                                name="startDate"
-                                control={control}
-                                render={({ field }) => (
-                                    <Calendar
-                                        // value={date}
-                                        onChange={(e) => { setStartDate(e.value); field.onChange(e.value) }}
-                                        placeholder='Start date'
-                                        className='w-full p-inputtext-sm'
-                                    />
-                                )}
-                            />
-                            <Controller
-                                name="endDate"
-                                control={control}
-                                render={({ field }) => (
-                                    <Calendar
-                                        // value={date}
-                                        onChange={(e) => { setEndDate(e.value); field.onChange(e.value) }}
-                                        placeholder='End date'
-                                        className='w-full p-inputtext-sm'
-                                    />
-                                )}
-                            />
-                        </div>
+                        <form onSubmit={handleSubmit(getStockDetailsReport)} className='flex gap-x-2 mr-8'>
+                            <div className='flex gap-x-2'>
+                                <Controller
+                                    name="expiryStartDate"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Calendar
+                                            // value={date}
+                                            onChange={(e) => { setExpiryStartDate(e.value); field.onChange(e.value) }}
+                                            placeholder='Expiry Start Date'
+                                            className='w-full p-inputtext-sm'
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    name="expiryEndDate"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Calendar
+                                            // value={date}
+                                            onChange={(e) => { setExpiryEndDate(e.value); field.onChange(e.value) }}
+                                            placeholder='Expiry End Date'
+                                            className='w-full p-inputtext-sm'
+                                        />
+                                    )}
+                                />
+                            </div>
 
-                        <div>
-                            <Dropdown value={expiryFilter} onChange={(e) => setExpiryFilter(e.value)} options={[{ label: 'All', value: '' }, { label: 'Expired', value: 'Expired' }, { label: 'Not Expired', value: 'Not Expired' }]} optionLabel="label" placeholder="Filter" size="small" className="w-full p-dropdown-sm" />
-                        </div>
+                            <div>
+                                <Dropdown
+                                    {...register('stockStatus')}
+                                    value={stockStatus} onChange={(e) => setStockStatus(e.value)} options={[{ label: 'All', value: 'all' }, { label: 'Nill', value: 'nill' }, { label: 'Low', value: 'low' }, { label: 'Sufficient', value: 'sufficient' }]} optionLabel="label" placeholder="Filter" size="small" className="w-full p-dropdown-sm" />
+                            </div>
+
+                            <Button type='submit' icon="pi pi-search" severity='primary' size='small' />
+                        </form>
+
 
                         <IconField iconPosition="left">
                             <InputIcon className="pi pi-search" />
-                            <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                            <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
                         </IconField>
                     </div>
                 </div>
-                <DataTable value={stockReportData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['nomenclature', 'stockNo', 'unit', 'cardNo', 'quantity']} emptyMessage="No stock report">
+                <DataTable value={stockReportData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['nomenclature', 'stockNo', 'unit', 'cardNo', 'quantity']} emptyMessage="No stock report" className='p-datatable-sm text-sm'>
                     <Column field="serial" header="Ser No." sortable></Column>
                     <Column field="cardNo" header="Card No." sortable></Column>
                     <Column field="stockNo" header="Part No" sortable></Column>

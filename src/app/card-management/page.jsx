@@ -91,7 +91,7 @@ const CardManagement = () => {
                     </div>
                 </div>
                 <div>
-                    <DataTable value={cards} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" emptyMessage="No stock report">
+                    <DataTable value={cards} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" emptyMessage="No card found">
                         <Column body={(rowData) => rowData?.aircraft?.aircraftName} header="Aircraft Name" sortable></Column>
                         <Column field="cardNo" header="Card No." sortable></Column>
                         <Column field="stockNo" header="Part No" sortable></Column>

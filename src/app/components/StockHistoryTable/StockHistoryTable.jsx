@@ -72,8 +72,8 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
     const actionBodyTemplate = (rowData) => {
         return (
             <div className='flex gap-x-2'>
-                <Button onClick={() => setUpdateStockHistory(rowData)} icon="pi pi-pencil" size='small' severity='success' />
-                <Button onClick={() => setDeleteStockHistory(rowData)} icon="pi pi-trash" size='small' severity='danger' />
+                <Button onClick={() => setUpdateStockHistory(rowData)} label='Edit' icon="pi pi-pencil" size='small' severity='success' />
+                <Button onClick={() => setDeleteStockHistory(rowData)} label='Delete' icon="pi pi-trash" size='small' severity='danger' />
             </div>
         )
     }
