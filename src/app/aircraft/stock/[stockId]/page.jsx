@@ -44,6 +44,7 @@ const page = ({ params: { stockId } }) => {
     const handleAddStockHistory = (stockHistory) => {
         setLoading(true);
         stockHistory.stockId = stockId;
+        stockHistory.aircraftUnit = selectedAircraftUnit?._id;
         console.log(stockHistory);
 
         fetch(`http://localhost:5000/api/v1/stockHistory`, {
