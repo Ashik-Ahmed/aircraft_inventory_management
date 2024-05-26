@@ -15,7 +15,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
         { field: 'latestExpiry', header: 'Latest Expiry' },
     ]
 
-    const exportColumns = cols.map(col => ({ title: col.header, dataKey: col.field }))
+    const exportColumns = stockDetailsReport?.selectedColumns?.map(col => ({ title: col.header, dataKey: col.field }))
 
     let customizedStockReport = stockDetailsReport?.stockReport?.map((stock, index) => {
         const customizedlatestExpiry = stock?.latestExpiry ? formatDate(stock?.latestExpiry) : 'N/A';

@@ -13,6 +13,8 @@ import { getAllAircraft } from '../../../lib/Aircraft';
 import { exportStockReport } from '../../../utils/ExportPDF';
 import { Controller, useForm } from 'react-hook-form';
 import { Calendar } from 'primereact/calendar';
+import { Dialog } from 'primereact/dialog';
+import ReportExportDialog from '../components/ReportExportDialog/ReportExportDialog';
 
 const Report = () => {
 
@@ -26,6 +28,7 @@ const Report = () => {
     const [expiryStartDate, setExpiryStartDate] = useState(null);
     const [expiryEndDate, setExpiryEndDate] = useState(null);
     const [stockStatus, setStockStatus] = useState(null);
+    const [exportDialog, setExportDialog] = useState(false);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -75,17 +78,7 @@ const Report = () => {
         setAllAircraft(allAircraft?.data);
     }
 
-    const handleExportStockReport = (stockReport) => {
 
-        const stockDetailsReportData = {
-            aircraft: selectedAircraft?.aircraftName || "All Aircraft",
-            // expiryFilter: expiryFilter,
-            stockReport: stockReport
-        }
-
-        exportStockReport(stockDetailsReportData);
-
-    }
 
     // const handleExpiryFilter = (data) => {
     //     console.log('Expiry Filter', data);
@@ -131,7 +124,7 @@ const Report = () => {
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Stock Report</h3>
-                        <Button onClick={() => handleExportStockReport(stockReport)} icon="pi pi-file-pdf" severity='danger' size='small' text aria-label='Export' />
+                        <Button onClick={() => setExportDialog(true)} icon="pi pi-file-pdf" severity='danger' size='small' text aria-label='Export' />
                     </div>
 
                     <div className='flex gap-x-2 items-center'>
@@ -195,6 +188,8 @@ const Report = () => {
                     <Column body={actionBodyTemplate} header="Actions"></Column> */}
                 </DataTable>
             </div>
+            {exportDialog && <ReportExportDialog stockReport={stockReport} exportDialog={exportDialog} setExportDialog={setExportDialog} />}
+
         </div>
     );
 };

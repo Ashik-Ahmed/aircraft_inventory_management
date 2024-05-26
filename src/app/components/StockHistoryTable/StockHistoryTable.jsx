@@ -56,7 +56,10 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
     }
     const aircraftUnitBodyTemplate = (rowData) => {
         return (
-            <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "N/A"}</p>
+            <div>
+                <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "N/A"}</p>
+                <p className='text-xs'>{rowData?.aircraftUnit?.regNo ? `Reg.: ${rowData?.aircraftUnit?.regNo}` : null}</p>
+            </div>
         );
     }
     const expiryDateBodyTemplate = (rowData) => {
