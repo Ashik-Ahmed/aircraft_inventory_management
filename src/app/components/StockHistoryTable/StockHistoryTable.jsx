@@ -14,7 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { formatDate, getDateDifference } from '../../../../utils/dateFunctionality';
 
 const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
-
+    console.log(stock);
     const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
@@ -54,7 +54,11 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
             <p>{formatDate(rowData?.createdAt)}</p>
         );
     }
-
+    const aircraftUnitBodyTemplate = (rowData) => {
+        return (
+            <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "N/A"}</p>
+        );
+    }
     const expiryDateBodyTemplate = (rowData) => {
         return (
             rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
@@ -155,10 +159,11 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                     </IconField>
                 </div>
                 <DataTable value={stock?.stockHistory} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['createdAt', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
-                    <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
-                    <Column field="quantity" header="Quantity" sortable></Column>
                     <Column field="voucherNo" header="Voucher No" sortable></Column>
                     <Column field="actionStatus" header="Action Status" sortable></Column>
+                    <Column field="quantity" header="Quantity" sortable></Column>
+                    <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
+                    <Column body={aircraftUnitBodyTemplate} header="Aircraft" ></Column>
                     <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
                     <Column body={expiryStatusBodyTemplate} header="Expiry Status"></Column>
                     <Column body={actionBodyTemplate} header="Actions"></Column>

@@ -34,6 +34,24 @@ const page = ({ params: { stockId } }) => {
     const [allAircraftUnit, setAllAircraftUnit] = useState([]);
     const [selectedAircraftUnit, setSelectedAircraftUnit] = useState(null);
 
+    const calculateAvailableQuantity = stockHistory => {
+        let receivedQty = 0;
+        let expendedQty = 0;
+
+        stockHistory?.forEach(entry => {
+            if (entry.actionStatus === "Received") {
+                receivedQty += entry.quantity;
+            } else if (entry.actionStatus === "Expenditure") {
+                expendedQty += entry.quantity;
+            }
+        });
+
+        return receivedQty - expendedQty;
+    };
+
+    // Assuming `result` is the object containing the fetched data:
+    const availableQuantity = calculateAvailableQuantity(stock?.stockHistory);
+
 
     const getStockDetails = async (id) => {
         const data = await getStockDetailsById(id);
@@ -44,7 +62,7 @@ const page = ({ params: { stockId } }) => {
     const handleAddStockHistory = (stockHistory) => {
         setLoading(true);
         stockHistory.stockId = stockId;
-        stockHistory.aircraftUnit = selectedAircraftUnit?._id;
+        // stockHistory?.aircraftUnit = selectedAircraftUnit?._id;
         console.log(stockHistory);
 
         fetch(`http://localhost:5000/api/v1/stockHistory`, {
@@ -90,8 +108,8 @@ const page = ({ params: { stockId } }) => {
     const aircraftUnitOptionTemplate = (option) => {
         return (
             <div>
-                <p>{option.aircraftName}</p>
-                <p className='text-xs'>Reg:{option.regNo}, Serial: {option.serialNo}</p>
+                <p>{option?.aircraftName}</p>
+                <p className='text-xs'>Reg:{option?.regNo}, Serial: {option?.serialNo}</p>
             </div>
         );
     };
@@ -100,13 +118,13 @@ const page = ({ params: { stockId } }) => {
         if (option) {
             return (
                 <div>
-                    <p>{option.aircraftName}</p>
-                    <p className='text-xs'>Reg:{option.regNo}, Serial: {option.serialNo}</p>
+                    <p>{option?.aircraftName}</p>
+                    <p className='text-xs'>Reg:{option?.regNo}, Serial: {option?.serialNo}</p>
                 </div>
             );
         }
 
-        return <span>{props.placeholder}</span>;
+        return <span>{props?.placeholder}</span>;
     };
 
     return (
@@ -118,6 +136,7 @@ const page = ({ params: { stockId } }) => {
                     <div className='mt-4 flex flex-col gap-2'>
                         <p>Stock: {stock?.nomenclature || 'N/A'}</p>
                         <p>Aircraft Name: {stock?.aircraftId?.aircraftName || 'N/A'}</p>
+                        <p>Available Qty: {availableQuantity || 'N/A'}</p>
                         <p>Card No.: {stock?.cardNo || 'N/A'}</p>
                         <p>Stock/Part No.: {stock?.stockNo || 'N/A'}</p>
                         <p>Unit: {stock?.unit || 'N/A'}</p>
