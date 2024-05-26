@@ -24,7 +24,7 @@ const ReportExportDialog = ({ exportDialog, setExportDialog, stockReport }) => {
         { field: 'latestExpiry', header: 'Latest Expiry' },
     ]
 
-    const [selectedColumns, setSelectedColumns] = useState([tableColumns[1]]);
+    const [selectedColumns, setSelectedColumns] = useState([tableColumns[0]]);
 
     const onColumnChange = (e) => {
         let _selectedColumns = [...selectedColumns];
