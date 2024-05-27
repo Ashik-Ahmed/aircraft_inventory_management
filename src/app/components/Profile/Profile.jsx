@@ -12,9 +12,12 @@ import { formatDate } from '../../../../utils/dateFunctionality';
 import { Dialog } from 'primereact/dialog';
 import { Password } from 'primereact/password';
 import UpdateProfile from './UpdateProfile';
+import { useRouter } from 'next/router';
 
 const Profile = () => {
     const cookie = new Cookies();
+    const router = useRouter();
+
     const toast = useRef()
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
@@ -27,6 +30,10 @@ const Profile = () => {
 
     const getUser = async (token) => {
         const userData = await getLoggedInUser(token);
+        if (!userData) {
+            router.push('/');
+            router.replace('/');
+        }
         setUser(userData)
     }
 

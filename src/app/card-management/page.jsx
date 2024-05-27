@@ -10,8 +10,22 @@ import { Toast } from 'primereact/toast';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { getAllAircraft } from '../../../lib/Aircraft';
+import { useRouter } from 'next/navigation';
+import Cookies from 'universal-cookie';
+import { getLoggedInUser } from '../../../lib/User';
 
 const CardManagement = () => {
+
+    const cookie = new Cookies();
+    const router = useRouter();
+    const getUser = async () => {
+        const user = await getLoggedInUser(cookie.get('TOKEN'));
+        if (!user) {
+            console.log("From manage-aircraft");
+            router.push('/');
+            router.replace('/');
+        }
+    }
 
     const toast = useRef(null);
 
@@ -48,7 +62,8 @@ const CardManagement = () => {
 
     useEffect(() => {
         getAllCardInfo();
-        getAllAircraftData()
+        getAllAircraftData();
+        getUser()
     }, []);
 
     const handleAddCard = (data) => {

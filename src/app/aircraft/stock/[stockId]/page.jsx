@@ -18,8 +18,22 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import StockHistoryTable from '@/app/components/StockHistoryTable/StockHistoryTable';
 import { formatDate } from '../../../../../utils/dateFunctionality';
+import Cookies from 'universal-cookie';
+import { useRouter } from 'next/navigation';
+import { getLoggedInUser } from '../../../../../lib/User';
 
 const page = ({ params: { stockId } }) => {
+
+    const cookie = new Cookies();
+    const router = useRouter();
+    const getUser = async () => {
+        const user = await getLoggedInUser(cookie.get('TOKEN'));
+        if (!user) {
+            console.log("From manage-aircraft");
+            router.push('/');
+            router.replace('/');
+        }
+    }
 
     const toast = useRef(null);
 
@@ -114,6 +128,7 @@ const page = ({ params: { stockId } }) => {
     useEffect(() => {
         getStockDetails(stockId);
         getAllAircraftUnit();
+        getUser()
     }, [stockId])
 
 

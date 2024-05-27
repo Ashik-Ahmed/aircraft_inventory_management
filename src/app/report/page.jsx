@@ -15,9 +15,21 @@ import { Controller, useForm } from 'react-hook-form';
 import { Calendar } from 'primereact/calendar';
 import { Dialog } from 'primereact/dialog';
 import ReportExportDialog from '../components/ReportExportDialog/ReportExportDialog';
+import { useRouter } from 'next/navigation';
+import Cookies from 'universal-cookie';
+import { getLoggedInUser } from '../../../lib/User';
 
 const Report = () => {
-
+    const cookie = new Cookies();
+    const router = useRouter();
+    const getUser = async () => {
+        const user = await getLoggedInUser(cookie.get('TOKEN'));
+        if (!user) {
+            console.log("From manage-aircraft");
+            router.push('/');
+            router.replace('/');
+        }
+    }
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
@@ -88,6 +100,7 @@ const Report = () => {
     useEffect(() => {
         getAllAircraftData();
         getStockDetailsReport(selectedAircraft?._id);
+        getUser()
     }, [selectedAircraft]);
 
     const stockReportData = stockReport?.map((item, index) => {

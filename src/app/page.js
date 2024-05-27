@@ -11,11 +11,13 @@ import { getAllAircraft } from "../../lib/Aircraft";
 import Cookies from "universal-cookie";
 import Login from "./components/Login/Login";
 import { getLoggedInUser } from "../../lib/User";
+import { useRouter } from "next/navigation";
 
 
 export default function Home() {
 
   const cookie = new Cookies();
+  const router = useRouter();
 
   const toast = useRef(null);
 
@@ -48,6 +50,11 @@ export default function Home() {
   }
   const getUser = async (token) => {
     const user = await getLoggedInUser(token);
+    if (!user) {
+      console.log("From homepage");
+      router.push('/');
+      router.replace('/');
+    }
     setUser(user);
   }
 

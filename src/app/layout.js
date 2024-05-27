@@ -5,6 +5,8 @@ import 'primereact/resources/themes/saga-blue/theme.css';
 import "primereact/resources/primereact.min.css";
 import { PrimeReactProvider } from "primereact/api";
 import Sidebar from "./components/Sidebar/Sidebar";
+import { redirect } from "next/navigation";
+import Cookies from "universal-cookie";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,11 +38,28 @@ export default function RootLayout({ children }) {
   //   }
   // }, [])
 
+  const cookie = new Cookies();
+
+  fetch('http://localhost:5000/api/v1/user/getLoggedInUser', {
+    method: 'GET',
+    headers: {
+      authorization: `Bearer ${cookie.get('TOKEN')}`
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      if (data.status === 'Failed') {
+        redirect('/');
+      }
+    })
+
   return (
     <html lang="en">
       <PrimeReactProvider>
-        <body className='flex'>
-          <div className="">
+        <body className="flex">
+          {/* <CustomLayout children={children} /> */}
+          <div>
             <Sidebar />
           </div>
           <div className="p-4 bg-gray-100 w-full overflow-y-auto">

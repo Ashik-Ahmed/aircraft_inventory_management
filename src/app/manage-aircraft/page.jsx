@@ -12,8 +12,22 @@ import { useForm } from 'react-hook-form';
 import { getAllAircraft } from '../../../lib/Aircraft';
 import AircraftUnitTable from '../components/AircraftUnitTable/AircraftUnitTable';
 import { Toast } from 'primereact/toast';
+import Cookies from 'universal-cookie';
+import { getLoggedInUser } from '../../../lib/User';
+import { useRouter } from 'next/navigation';
 
 const ManageAircraft = () => {
+
+    const cookie = new Cookies();
+    const router = useRouter();
+    const getUser = async () => {
+        const user = await getLoggedInUser(cookie.get('TOKEN'));
+        if (!user) {
+            console.log("From manage-aircraft");
+            router.push('/');
+            router.replace('/');
+        }
+    }
 
     const toast = useRef(null);
 
@@ -67,9 +81,12 @@ const ManageAircraft = () => {
             })
     }
 
+
+
     useEffect(() => {
         getAllAircraftData();
         getAllAircraftUnit()
+        getUser();
     }, []);
 
     const handleAddAircraftUnit = (aircraftUnitData) => {

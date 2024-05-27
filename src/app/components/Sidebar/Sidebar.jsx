@@ -36,6 +36,13 @@ const Sidebar = () => {
 
     const getUser = async (token) => {
         const data = await getLoggedInUser(token);
+        console.log(data);
+        if (!data) {
+            console.log("From sidebar");
+            router.replace('/')
+            router.push('/')
+            // window.location.reload();
+        }
         setUser(data);
     }
 
@@ -49,6 +56,7 @@ const Sidebar = () => {
         console.log('Logout');
         cookie.remove('TOKEN')
         router.replace('/')
+        // router.push('/')
         window.location.reload();
     }
 
@@ -79,7 +87,7 @@ const Sidebar = () => {
                 }
 
             </ul >
-            <div className='text-white font-semibold flex items-center gap-x-2 mt-44 ml-4'>
+            <div className='text-white font-semibold flex items-center gap-x-2 mt-32 ml-4'>
                 <Image src={user?.photo || userPhoto} alt='user' width={30} height={30} className='rounded-full border' />
                 <div>
                     <p>{user?.name}</p>
