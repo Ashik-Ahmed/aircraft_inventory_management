@@ -125,6 +125,12 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         );
     }
 
+    const quantityBodyTemplate = (rowData) => {
+        return (
+            <p className={`${rowData?.quantity < rowData?.minimumQuantity && 'text-white bg-red-400 w-fit px-2 rounded-md'}`}>{rowData.quantity}</p>
+        );
+    }
+
     const latestExpiryBodyTemplate = (rowData) => {
         return (
             <p>{rowData?.latestExpiry ? formatDate(rowData?.latestExpiry) : 'N/A'}</p>
@@ -163,7 +169,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                     <Column field="cardNo" header="Card No"></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
                     <Column field="stockNo" header="Stock/Parts No" sortable></Column>
-                    <Column field="quantity" header="Quantity" sortable></Column>
+                    <Column body={quantityBodyTemplate} header="Quantity" sortable></Column>
                     <Column body={latestExpiryBodyTemplate} header="Latest Expire" sortField='latestExpiry' sortable></Column>
                     <Column body={statusBodyTemplate} header="Status"></Column>
                     {/* <Column field="uploadStatus" header="Upload Status"></Column> */}

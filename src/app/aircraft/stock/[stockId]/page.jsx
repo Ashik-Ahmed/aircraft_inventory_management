@@ -62,27 +62,39 @@ const page = ({ params: { stockId } }) => {
     const handleAddStockHistory = (stockHistory) => {
         setLoading(true);
         stockHistory.stockId = stockId;
+        if (stockHistory?.actionStatus === "Expenditure") {
+            stockHistory.aircraftUnit = selectedAircraftUnit?._id
+        }
         // stockHistory?.aircraftUnit = selectedAircraftUnit?._id;
         console.log(stockHistory);
 
-        fetch(`http://localhost:5000/api/v1/stockHistory`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(stockHistory)
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if (data.status == 'Success') {
-                    getStockDetails(stockId);
-                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
-                }
-                else {
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
-                }
+        if (stockHistory?.quantity <= 0) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Quantity should be greater than 0', life: 3000 });
+        }
+
+        else if (availableQuantity < stockHistory?.quantity) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Not enough quantity in stock', life: 3000 });
+        }
+        else {
+            fetch(`http://localhost:5000/api/v1/stockHistory`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(stockHistory)
             })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.status == 'Success') {
+                        getStockDetails(stockId);
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
+                    }
+                    else {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                    }
+                })
+        }
 
         setLoading(false);
         setActionStatus(null);
@@ -94,7 +106,7 @@ const page = ({ params: { stockId } }) => {
     const getAllAircraftUnit = async () => {
         const data = await fetch('http://localhost:5000/api/v1/aircraftUnit');
         const res = await data.json();
-        console.log(res);
+        // console.log(res);
         setAllAircraftUnit(res.data);
     }
 
@@ -136,7 +148,7 @@ const page = ({ params: { stockId } }) => {
                     <div className='mt-4 flex flex-col gap-2'>
                         <p>Stock: {stock?.nomenclature || 'N/A'}</p>
                         <p>Aircraft Name: {stock?.aircraftId?.aircraftName || 'N/A'}</p>
-                        <p>Available Qty: {availableQuantity || 'N/A'}</p>
+                        <p>Available Qty: {availableQuantity || 'N/A'} {availableQuantity < stock?.minimumQuantity && <span className='text-white bg-red-500 rounded-md p-1'>Low Stock</span>}</p>
                         <p>Card No.: {stock?.cardNo || 'N/A'}</p>
                         <p>Stock/Part No.: {stock?.stockNo || 'N/A'}</p>
                         <p>Unit: {stock?.unit || 'N/A'}</p>

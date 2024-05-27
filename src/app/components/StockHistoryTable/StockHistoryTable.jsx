@@ -153,7 +153,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Stock History</h3>
-                        <Button onClick={() => setAddStockHistory(true)} icon="pi pi-plus" size='small' text aria-label='Add' />
+                        <Button onClick={() => setAddStockHistory(true)} label='Add' icon="pi pi-plus" size='small' aria-label='Add' />
                     </div>
 
                     <IconField iconPosition="left">
@@ -165,6 +165,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                     <Column field="voucherNo" header="Voucher No" sortable></Column>
                     <Column field="actionStatus" header="Action Status" sortable></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
+                    <Column field="itemType" header="Type" sortable></Column>
                     <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
                     <Column body={aircraftUnitBodyTemplate} header="Aircraft" ></Column>
                     <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>

@@ -74,7 +74,7 @@ const page = ({ params: { id } }) => {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 if (data.status === 'Success') {
                     setCards(data?.data);
                 }
@@ -94,10 +94,14 @@ const page = ({ params: { id } }) => {
     };
 
     const handleAddNewStock = async (stockData) => {
-        console.log("Add New Stock", stockData);
         stockData.aircraftId = aircraft?._id
+        stockData.stockNo = selectedCard?.stockNo[0][0];
+        stockData.nomenclature = selectedCard?.nomenclature
         const stockPhoto = new FormData();
         stockPhoto.append('image', image);
+
+        console.log("Add New Stock", stockData);
+        console.log(selectedCard);
         await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
             method: 'POST',
             body: stockPhoto
@@ -149,7 +153,7 @@ const page = ({ params: { id } }) => {
             <StockTable aircraft={aircraft} id={id} getAircraftData={getAircraftData} />
 
             {/* Add New Stock Dialog  */}
-            <Dialog header="Add New Stock" visible={addStock} onHide={() => { setAddStock(false); setSelectedUnit(null); reset() }}
+            <Dialog header="Add New Stock" visible={addStock} onHide={() => { setAddStock(false); setSelectedUnit(null); setSelectedCard(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddNewStock)} className="flex flex-col gap-2 mt-4">
 
@@ -173,9 +177,15 @@ const page = ({ params: { id } }) => {
                     </div>
                     <div className='w-full'>
                         <InputText
-                            {...register("stockNo", { required: "Stock/Parts No. is required" })}
+                            {...register("stockNo")}
                             placeholder="Stock/Parts No.*" value={selectedCard?.stockNo} className='w-full p-inputtext-sm' />
-                        {errors.stockNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.stockNo.message}</span>}
+                        {/* {errors.stockNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.stockNo.message}</span>} */}
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("nomenclature")}
+                            placeholder="Nomenclature*" value={selectedCard?.nomenclature} className='w-full p-inputtext-sm' />
+                        {/* {errors.nomenclature?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.nomenclature.message}</span>} */}
                     </div>
                     <div className='w-full'>
                         <Dropdown
@@ -186,9 +196,9 @@ const page = ({ params: { id } }) => {
                     </div>
                     <div className='w-full'>
                         <InputText
-                            {...register("nomenclature", { required: "Nomenclature is required" })}
-                            placeholder="Nomenclature*" value={selectedCard?.nomenclature} className='w-full p-inputtext-sm' />
-                        {errors.nomenclature?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.nomenclature.message}</span>}
+                            {...register("minimumQuantity", { required: "Minimum Qty. is required" })}
+                            placeholder="Minimum Qty.*" type='number' className='w-full p-inputtext-sm' />
+                        {errors.minimumQuantity?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.minimumQuantity.message}</span>}
                     </div>
                     <div className='w-full'>
                         <InputText
