@@ -41,7 +41,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
                     doc.setFontSize(12);
                     centerText(`${stockDetailsReport?.reportName}`, 35);
                     centerText(`${stockDetailsReport?.optional1}`, 45);
-                    centerText(`${stockDetailsReport?.optional2}`, 45);
+                    centerText(`${stockDetailsReport?.optional2}`, 55);
 
                     // doc.setFontSize(11);
                     // doc.text(`Report Month: ${conveyanceData?.reportMonth}`, 30, 45);

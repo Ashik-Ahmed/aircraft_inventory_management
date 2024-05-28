@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
 import { getLoggedInUser } from '../../../../lib/User';
 
-const page = ({ params: { id } }) => {
+const Aircraft = ({ params: { id } }) => {
 
     const cookie = new Cookies();
     const router = useRouter();
@@ -259,4 +259,4 @@ const page = ({ params: { id } }) => {
     );
 };
 
-export default page;
+export default Aircraft;

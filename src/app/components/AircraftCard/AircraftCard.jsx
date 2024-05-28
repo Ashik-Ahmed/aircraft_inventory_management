@@ -1,6 +1,7 @@
 'use client'
 
 import Image from "next/image";
+import aircraft from '../../../assets/images/aircraft.jpg'
 
 import Link from "next/link";
 

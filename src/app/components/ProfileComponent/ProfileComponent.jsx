@@ -14,7 +14,7 @@ import { Password } from 'primereact/password';
 import UpdateProfile from './UpdateProfile';
 import { useRouter } from 'next/router';
 
-const Profile = () => {
+const ProfileComponent = () => {
     const cookie = new Cookies();
     const router = useRouter();
 
@@ -45,27 +45,27 @@ const Profile = () => {
 
     const handleChangePassword = (data) => {
 
-        fetch(`http://localhost:5000/api/v1/employee/updatePassword/${employee?.email}`, {
-            method: "PATCH",
-            headers: {
-                "content-type": "application/json",
-                "Authorization": `Bearer ${accessToken}`
-            },
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then((data => {
-                if (data.status == "Success") {
-                    setChangePassword(false)
-                    reset()
-                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Password Updated', life: 3000 });
-                }
-                else {
-                    console.log("Failed to update password");
-                    console.log(data.error);
-                    toast.current.show({ severity: 'error', summary: 'Failed!', detail: `${data.error}`, life: 3000 });
-                }
-            }))
+        // fetch(`http://localhost:5000/api/v1/employee/updatePassword/${employee?.email}`, {
+        //     method: "PATCH",
+        //     headers: {
+        //         "content-type": "application/json",
+        //         "Authorization": `Bearer ${accessToken}`
+        //     },
+        //     body: JSON.stringify(data)
+        // })
+        //     .then(res => res.json())
+        //     .then((data => {
+        //         if (data.status == "Success") {
+        //             setChangePassword(false)
+        //             reset()
+        //             toast.current.show({ severity: 'success', summary: 'Success', detail: 'Password Updated', life: 3000 });
+        //         }
+        //         else {
+        //             console.log("Failed to update password");
+        //             console.log(data.error);
+        //             toast.current.show({ severity: 'error', summary: 'Failed!', detail: `${data.error}`, life: 3000 });
+        //         }
+        //     }))
 
     }
 
@@ -215,11 +215,11 @@ const Profile = () => {
                 </form>
             </Dialog>
 
-            {
+            {/* {
                 updateForm && <UpdateProfile user={user} getUser={getUser} setUpdateForm={setUpdateForm} />
-            }
+            } */}
         </div>
     );
 };
 
-export default Profile;
+export default ProfileComponent;

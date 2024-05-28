@@ -22,7 +22,7 @@ import Cookies from 'universal-cookie';
 import { useRouter } from 'next/navigation';
 import { getLoggedInUser } from '../../../../../lib/User';
 
-const page = ({ params: { stockId } }) => {
+const Stock = ({ params: { stockId } }) => {
 
     const cookie = new Cookies();
     const router = useRouter();
@@ -196,7 +196,7 @@ const page = ({ params: { stockId } }) => {
                     <div className='w-full'>
                         <Dropdown
                             {...register("itemType", { required: "Item type is required" })}
-                            value={itemType} onChange={(e) => setItemType(e.value)} options={[{ label: 'New', value: 'New' }, { label: 'Old', value: 'Old' }]} optionLabel="label"
+                            value={itemType} onChange={(e) => setItemType(e.value)} options={[{ label: 'New', value: 'New' }, { label: 'Used', value: 'Used' }]} optionLabel="label"
                             placeholder={"Select item type*"} size="small" className="w-full p-dropdown-sm" />
                         {errors.itemType?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.itemType.message}</span>}
                     </div>
@@ -260,4 +260,4 @@ const page = ({ params: { stockId } }) => {
     );
 };
 
-export default page;
+export default Stock;
