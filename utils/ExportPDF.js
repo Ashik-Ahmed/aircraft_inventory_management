@@ -23,7 +23,22 @@ exports.exportStockReport = async (stockDetailsReport) => {
     const exportToPDF = () => {
         import('jspdf').then(jsPDF => {
             import('jspdf-autotable').then(() => {
-                const doc = new jsPDF.default(0, 2);
+                const tempDoc = new jsPDF.default(0, 2);
+                let totalHeadingWidth = 0;
+                exportColumns.forEach(column => {
+                    totalHeadingWidth += tempDoc.getTextWidth(column.title);
+                });
+
+                // Determine the orientation based on the total width of headings
+                const pageWidth = tempDoc.internal.pageSize.width || tempDoc.internal.pageSize.getWidth();
+                const orientation = totalHeadingWidth > pageWidth ? 'landscape' : 'portrait';
+
+                // Create the actual document with the determined orientation
+                const doc = new jsPDF.default(orientation, 'pt');
+
+                // Now calculate the actual pageWidth based on the orientation
+                const actualPageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
 
                 if (stockDetailsReport) {
                     const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -39,9 +54,9 @@ exports.exportStockReport = async (stockDetailsReport) => {
                     doc.setTextColor(10);
                     centerText(`${stockDetailsReport?.heading}`, 22);
                     doc.setFontSize(12);
-                    centerText(`${stockDetailsReport?.reportName}`, 35);
-                    centerText(`${stockDetailsReport?.optional1}`, 45);
-                    centerText(`${stockDetailsReport?.optional2}`, 55);
+                    centerText(`${stockDetailsReport?.reportName}`, 38);
+                    centerText(`${stockDetailsReport?.optional1}`, 53);
+                    centerText(`${stockDetailsReport?.optional2}`, 67);
 
                     // doc.setFontSize(11);
                     // doc.text(`Report Month: ${conveyanceData?.reportMonth}`, 30, 45);
@@ -72,13 +87,13 @@ exports.exportStockReport = async (stockDetailsReport) => {
                         doc.text(str, data.settings.margin.left, pageHeight - 10);
                     }
                 });
-                var pageSize = doc.internal.pageSize;
-                var pageHeight = pageSize.height
-                    ? pageSize.height
-                    : pageSize.getHeight();
-                var pageWidth = pageSize.width
-                    ? pageSize.width
-                    : pageSize.getWidth();
+                // var pageSize = doc.internal.pageSize;
+                // var pageHeight = pageSize.height
+                //     ? pageSize.height
+                //     : pageSize.getHeight();
+                // var pageWidth = pageSize.width
+                //     ? pageSize.width
+                //     : pageSize.getWidth();
 
                 // var signatureLine = "__________________"
                 // var signature = conveyanceData.generatedBy;

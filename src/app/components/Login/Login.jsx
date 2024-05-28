@@ -86,7 +86,7 @@ const Login = () => {
                             </div>
                             <a className="text-sm italic hover:underline ml-2 text-secondary text-right cursor-pointer">Forgot your password?</a>
                         </div>
-                        <Button type='submit' label="Sign In" icon="pi pi-user" severity='primary' loading={loading} className="w-full bg-blue-400 text-white p-1" />
+                        <Button type='submit' label="Sign In" icon="pi pi-user" severity='primary' loading={loading} className="w-full" />
                     </form>
                 </div>
             </div>
