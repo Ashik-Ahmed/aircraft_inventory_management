@@ -54,6 +54,14 @@ exports.exportStockReport = async (stockDetailsReport) => {
                         const textWidth = doc.getTextWidth(text);
                         const x = (pageWidth - textWidth) / 2;
                         doc.text(text, x, y);
+
+                        // Add an underline by drawing a line directly beneath the text
+                        const fontSize = doc.internal.getFontSize();
+                        const textHeight = fontSize * 0.352777778; // Convert points to mm
+                        doc.setDrawColor(0, 0, 0); // Set the line color to black
+                        doc.setLineWidth(0.5); // Set the line width
+                        doc.line(x, y + 1.5, x + textWidth, y + 1.5); // Draw the line
+
                     };
 
                     // Header
