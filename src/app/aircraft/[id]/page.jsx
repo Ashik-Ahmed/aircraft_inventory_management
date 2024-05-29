@@ -112,46 +112,82 @@ const Aircraft = ({ params: { id } }) => {
         stockData.aircraftId = aircraft?._id
         stockData.stockNo = selectedCard?.stockNo[0][0];
         stockData.nomenclature = selectedCard?.nomenclature
+
         const stockPhoto = new FormData();
         stockPhoto.append('image', image);
 
-        console.log("Add New Stock", stockData);
-        console.log(selectedCard);
-        await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+        // Upload the image first
+        const uploadResponse = await fetch('http://localhost:5000/api/v1/upload', {
             method: 'POST',
             body: stockPhoto
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log("inside imgbb api: ", data);
+        });
 
-                if (data?.data?.url) {
-                    stockData.image = data.data.url
-                    fetch('http://localhost:5000/api/v1/stock', {
-                        method: 'POST',
-                        headers: {
-                            'content-type': 'application/json',
-                            // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
-                        },
-                        body: JSON.stringify(stockData)
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log(data);
-                            if (data.status == 'Success') {
-                                getAircraftData(id);
-                                toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Stock Added Successfully', life: 3000 });
-                            }
-                            else {
-                                toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
-                            }
-                        })
-                }
-                else {
-                    toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
-                }
+        const uploadData = await uploadResponse.json();
 
+
+        if (uploadData.status === 'Success') {
+            console.log("image uploaded and db inserting");
+            // Add the uploaded image path to the stock data
+            stockData.image = uploadData.filePath;
+
+            fetch('http://localhost:5000/api/v1/stock', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+                },
+                body: JSON.stringify(stockData)
             })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.status == 'Success') {
+                        getAircraftData(id);
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Stock Added Successfully', life: 3000 });
+                    }
+                    else {
+                        toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+                    }
+                })
+        }
+
+        // console.log("Add New Stock", stockData);
+        // console.log(selectedCard);
+        // await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+        //     method: 'POST',
+        //     body: stockPhoto
+        // })
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         console.log("inside imgbb api: ", data);
+
+        //         if (data?.data?.url) {
+        //             stockData.image = data.data.url
+        //             fetch('http://localhost:5000/api/v1/stock', {
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'content-type': 'application/json',
+        //                     // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+        //                 },
+        //                 body: JSON.stringify(stockData)
+        //             })
+        //                 .then(res => res.json())
+        //                 .then(data => {
+        //                     console.log(data);
+        //                     if (data.status == 'Success') {
+        //                         getAircraftData(id);
+        //                         toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Stock Added Successfully', life: 3000 });
+        //                     }
+        //                     else {
+        //                         toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+        //                     }
+        //                 })
+        //         }
+        //         else {
+        //             toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
+        //         }
+
+        //     })
         setAddStock(false);
         setSelectedUnit(null);
         reset();

@@ -9,6 +9,10 @@ const nextConfig = {
                 // hostname: 'cdn.jetphotos.com'
                 hostname: 'i.ibb.co',
             },
+            {
+                protocol: 'http',
+                hostname: 'localhost'
+            }
         ],
     },
     swcMinify: true, // Enable SWC Minification for faster builds

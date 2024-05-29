@@ -172,7 +172,7 @@ const Stock = ({ params: { stockId } }) => {
                     </div>
                 </div>
                 <div className='rounded-md'>
-                    <Image src={stock?.image} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md border' />
+                    <Image src={stock?.imageUrl} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md border' />
                 </div>
             </div>
 

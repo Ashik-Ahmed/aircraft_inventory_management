@@ -1,4 +1,5 @@
 const { formatDate } = require('./dateFunctionality');
+const RobotoBase64 = require('./Roboto-Regular');
 
 exports.exportStockReport = async (stockDetailsReport) => {
 
@@ -23,6 +24,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
     const exportToPDF = () => {
         import('jspdf').then(jsPDF => {
             import('jspdf-autotable').then(() => {
+
                 const tempDoc = new jsPDF.default(0, 2);
                 let totalHeadingWidth = 0;
                 exportColumns.forEach(column => {
@@ -35,6 +37,11 @@ exports.exportStockReport = async (stockDetailsReport) => {
 
                 // Create the actual document with the determined orientation
                 const doc = new jsPDF.default(orientation, 'pt');
+
+                // Add the custom font
+                doc.addFileToVFS('Roboto-Regular.ttf', RobotoBase64);
+                doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+                doc.setFont('Roboto'); // Set the font to Roboto
 
                 // Now calculate the actual pageWidth based on the orientation
                 const actualPageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();

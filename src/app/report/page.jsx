@@ -20,6 +20,10 @@ import Cookies from 'universal-cookie';
 import { getLoggedInUser } from '../../../lib/User';
 
 const Report = () => {
+
+
+
+
     const cookie = new Cookies();
     const router = useRouter();
     const getUser = async () => {
