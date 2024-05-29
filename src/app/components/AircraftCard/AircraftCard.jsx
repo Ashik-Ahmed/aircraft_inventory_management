@@ -10,7 +10,7 @@ const AircraftCard = ({ aircraft }) => {
     return (
         <Link href={`/aircraft/${_id}`} className="relative rounded-md border shadow-md hover:shadow-xl hover:shadow-blue-200 hover:scale-110 duration-100">
             <Image
-                src={image}
+                src={image.includes('uploads') ? 'http://localhost:5000' + image : image}
                 alt={imageAlt}
                 width={220}
                 height={220}

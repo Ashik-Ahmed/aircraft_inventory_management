@@ -76,42 +76,75 @@ export default function Home() {
     const aircraftPhoto = new FormData();
     aircraftPhoto.append('image', image);
 
-    await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+    const uploadResponse = await fetch('http://localhost:5000/api/v1/upload', {
       method: 'POST',
       body: aircraftPhoto
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("inside imgbb api: ", data);
+    });
 
-        if (data?.data?.url) {
-          aircraftData.image = data.data.url
-          fetch('http://localhost:5000/api/v1/aircraft', {
-            method: 'POST',
-            headers: {
-              'content-type': 'application/json',
-              // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
-            },
-            body: JSON.stringify(aircraftData)
-          })
-            .then(res => res.json())
-            .then(data => {
-              console.log(data);
-              if (data.status == 'Success') {
-                getAircraftData();
-                toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Aircraft Added', life: 3000 });
-              }
-              else {
-                toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
-              }
-            })
-        }
+    const uploadData = await uploadResponse.json();
 
-        else {
-          toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
-        }
+    if (uploadData.status === 'Success') {
+      console.log("image uploaded and db inserting");
+      // Add the uploaded image path to the stock data
+      aircraftData.image = uploadData.filePath;
 
+      fetch('http://localhost:5000/api/v1/aircraft', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+        },
+        body: JSON.stringify(aircraftData)
       })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          if (data.status == 'Success') {
+            getAircraftData();
+            toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Aircraft Added', life: 3000 });
+          }
+          else {
+            toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+          }
+        })
+    }
+
+    // await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+    //   method: 'POST',
+    //   body: aircraftPhoto
+    // })
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     console.log("inside imgbb api: ", data);
+
+    //     if (data?.data?.url) {
+    //       aircraftData.image = data.data.url
+    //       fetch('http://localhost:5000/api/v1/aircraft', {
+    //         method: 'POST',
+    //         headers: {
+    //           'content-type': 'application/json',
+    //           // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+    //         },
+    //         body: JSON.stringify(aircraftData)
+    //       })
+    //         .then(res => res.json())
+    //         .then(data => {
+    //           console.log(data);
+    //           if (data.status == 'Success') {
+    //             getAircraftData();
+    //             toast.current.show({ severity: 'success', summary: 'Success', detail: 'New Aircraft Added', life: 3000 });
+    //           }
+    //           else {
+    //             toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+    //           }
+    //         })
+    //     }
+
+    //     else {
+    //       toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
+    //     }
+
+    //   })
 
     setLoading(false);
     setAddNew(false);
