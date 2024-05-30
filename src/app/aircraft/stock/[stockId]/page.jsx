@@ -60,7 +60,11 @@ const Stock = ({ params: { stockId } }) => {
             }
         });
 
-        return receivedQty - expendedQty;
+        const avlQuantity = receivedQty - expendedQty;
+        if (avlQuantity > 0) {
+            return avlQuantity;
+        }
+        return 0;
     };
 
     // Assuming `result` is the object containing the fetched data:
@@ -86,8 +90,10 @@ const Stock = ({ params: { stockId } }) => {
             toast.current.show({ severity: 'error', summary: 'Error', detail: 'Quantity should be greater than 0', life: 3000 });
         }
 
-        else if (availableQuantity < stockHistory?.quantity) {
-            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Not enough quantity in stock', life: 3000 });
+        if (actionStatus == "Expenditure") {
+            if (availableQuantity < stockHistory?.quantity) {
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Not enough quantity in stock', life: 3000 });
+            }
         }
         else {
             fetch(`http://localhost:5000/api/v1/stockHistory`, {
