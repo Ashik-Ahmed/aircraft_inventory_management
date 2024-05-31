@@ -66,6 +66,13 @@ const CardManagement = () => {
         getUser()
     }, []);
 
+    const cardData = cards?.map((item, index) => {
+        return {
+            serial: index + 1, // Add serial number property starting from 1
+            ...item
+        };
+    });
+
     const handleAddCard = (data) => {
         console.log(data);
         data.aircraft = selectedAircraft?._id
@@ -106,7 +113,8 @@ const CardManagement = () => {
                     </div>
                 </div>
                 <div>
-                    <DataTable value={cards} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" emptyMessage="No card found">
+                    <DataTable value={cardData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" emptyMessage="No card found">
+                        <Column field="serial" header="Ser. No."></Column>
                         <Column body={(rowData) => rowData?.aircraft?.aircraftName} header="Aircraft Name" sortable></Column>
                         <Column field="cardNo" header="Card No." sortable></Column>
                         <Column field="stockNo" header="Part No" sortable></Column>

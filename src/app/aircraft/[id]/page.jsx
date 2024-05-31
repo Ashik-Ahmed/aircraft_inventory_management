@@ -80,7 +80,7 @@ const Aircraft = ({ params: { id } }) => {
     }
 
     const getAllCards = async () => {
-        fetch('http://localhost:5000/api/v1/cardInfo', {
+        fetch(`http://localhost:5000/api/v1/cardInfo?aircraftId=${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -222,7 +222,7 @@ const Aircraft = ({ params: { id } }) => {
                     <div className='w-full'>
                         <Dropdown
                             {...register("cardNo", { required: "Card No. is required" })}
-                            value={selectedCard} onChange={(e) => setSelectedCard(e.value)} options={cards} optionLabel="cardNo"
+                            value={selectedCard} onChange={(e) => setSelectedCard(e.value)} options={aircraft?.cardInfo} optionLabel="cardNo"
                             placeholder="Select a Card" size="small" className="w-full p-dropdown-sm" />
                         {errors.cardNo?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.cardNo.message}</span>}
                     </div>
