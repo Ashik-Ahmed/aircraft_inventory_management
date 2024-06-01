@@ -180,7 +180,7 @@ const Report = () => {
                                     value={stockStatus} onChange={(e) => setStockStatus(e.value)} options={[{ label: 'All', value: 'all' }, { label: 'Nill', value: 'nill' }, { label: 'Low', value: 'low' }, { label: 'Sufficient', value: 'sufficient' }]} optionLabel="label" placeholder="Filter" size="small" className="w-full p-dropdown-sm" />
                             </div>
 
-                            <Button type='submit' icon="pi pi-search" severity='primary' size='small' />
+                            <Button type='submit' icon="pi pi-send" severity='primary' size='small' />
                         </form>
 
 
