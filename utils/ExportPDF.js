@@ -1,10 +1,11 @@
 const { formatDate } = require('./dateFunctionality');
-const RobotoBase64 = require('./Roboto-Regular');
+// const RobotoBase64 = require('./Roboto-Regular');
+const DejaVuSans = require('./DejaVu-Sans');
 
 exports.exportStockReport = async (stockDetailsReport) => {
 
     const exportColumns = [
-        { title: 'Serial', dataKey: 'serial' },
+        { title: 'Ser. No.', dataKey: 'serial' },
         ...stockDetailsReport?.selectedColumns?.map(col => ({ title: col.header, dataKey: col.field }))]
 
     let customizedStockReport = stockDetailsReport?.stockReport?.map((stock, index) => {
@@ -38,10 +39,18 @@ exports.exportStockReport = async (stockDetailsReport) => {
                 // Create the actual document with the determined orientation
                 const doc = new jsPDF.default(orientation, 'pt');
 
-                // Add the custom font
-                doc.addFileToVFS('Roboto-Regular.ttf', RobotoBase64);
-                doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-                doc.setFont('Roboto'); // Set the font to Roboto
+                // Create the actual document with the determined orientation                 const doc = new jsPDF.default(orientation, 'pt');
+
+                // Add the custom font                 
+                // doc.addFileToVFS('Roboto-Regular.ttf', RobotoBase64);
+                // doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+                // // Set the font to Roboto
+                // doc.setFont('Roboto');
+
+                // Assuming DejaVuSans is the Base64-encoded string of the font file                 
+                doc.addFileToVFS('DejaVuSans.ttf', DejaVuSans);
+                doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+                doc.setFont('DejaVuSans');
 
                 // Now calculate the actual pageWidth based on the orientation
                 const actualPageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -84,6 +93,8 @@ exports.exportStockReport = async (stockDetailsReport) => {
                 doc.autoTable(exportColumns, stockDetailsReport?.stockReport, {
                     startY: 85,
                     styles: {
+                        // font: 'Roboto',
+                        font: 'DejaVuSans',
                         lineWidth: 0.01, // Width of the line for the borders
                         lineColor: [200, 200, 200], // Color of the line for the borders, [0, 0, 0] is black
                     },

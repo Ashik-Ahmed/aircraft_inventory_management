@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -8,7 +8,11 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import { redirect } from "next/navigation";
 import Cookies from "universal-cookie";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({
+  weight: '400',
+  subsets: ['latin'],
+})
 
 export const metadata = {
   title: "Aircraft Inventory anagement",
@@ -57,15 +61,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <PrimeReactProvider>
-        <body className="flex">
-          {/* <CustomLayout children={children} /> */}
-          <div>
-            <Sidebar />
-          </div>
-          <div className="p-4 bg-gray-100 w-full overflow-y-auto">
-            {children}
-          </div>
-        </body>
+        <main className={roboto.className}>
+          <body className="flex">
+            {/* <CustomLayout children={children} /> */}
+            <div>
+              <Sidebar />
+            </div>
+            <div className="p-4 bg-gray-100 w-full overflow-y-auto">
+              {children}
+            </div>
+          </body>
+        </main>
       </PrimeReactProvider>
     </html>
   );
