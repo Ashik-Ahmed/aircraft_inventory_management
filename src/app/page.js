@@ -152,7 +152,7 @@ export default function Home() {
     reset();
   }
 
-  if (cookie.get('TOKEN') == null) {
+  if (!user) {
     return <div className="w-fit mx-auto h-screen"><Login /></div>
   }
 

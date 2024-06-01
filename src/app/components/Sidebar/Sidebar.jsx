@@ -23,7 +23,7 @@ const Sidebar = () => {
 
     const currentPath = usePathname();
 
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState(null);
 
     const menus = [
         // { title: 'Dashboard', link: '/', icon: <FaHome /> },
@@ -35,10 +35,11 @@ const Sidebar = () => {
     ]
 
     const getUser = async (token) => {
+        console.log(token);
         const data = await getLoggedInUser(token);
         console.log(data);
-        if (!data) {
-            console.log("From sidebar");
+        if (!data?.user) {
+            console.log("No user found");
             router.replace('/')
             router.push('/')
             // window.location.reload();
@@ -53,14 +54,15 @@ const Sidebar = () => {
     }, [])
 
     const handleLogout = () => {
+        setUser(null);
         console.log('Logout');
         cookie.remove('TOKEN')
         router.replace('/')
         // router.push('/')
         window.location.reload();
     }
-
-    if (!cookie.get('TOKEN')) {
+    console.log(user);
+    if (!user) {
         return (
             <div></div>
         )
