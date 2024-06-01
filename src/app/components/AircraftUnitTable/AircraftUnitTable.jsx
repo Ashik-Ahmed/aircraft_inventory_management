@@ -42,6 +42,7 @@ const AircraftUnitTable = ({ allAirraft, allAircraftUnit, filters, getAllAircraf
         <div>
             <div>
                 <DataTable value={allAircraftUnit} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['regNo', 'serialNo']} emptyMessage="No aircraft unit available">
+                    <Column field='serial' header="Ser. No." sortable></Column>
                     <Column field='aircraftName' header="Model" sortable></Column>
                     <Column field="regNo" header="Reg. No." sortable></Column>
                     <Column field="serialNo" header="Serial No." sortable></Column>

@@ -46,7 +46,12 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
         setGlobalFilterValue(value);
     };
 
-
+    const stockHistoryData = stock?.stockHistory?.map((item, index) => {
+        return {
+            serial: index + 1, // Add serial number property starting from 1
+            ...item
+        };
+    });
 
     const dateBodyTemplate = (rowData) => {
         return (
@@ -62,15 +67,15 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
             </div>
         );
     }
+    // const expiryDateBodyTemplate = (rowData) => {
+    //     return (
+    //         rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
+    //     );
+    // }
+
     const expiryDateBodyTemplate = (rowData) => {
         return (
-            rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
-        );
-    }
-
-    const expiryStatusBodyTemplate = (rowData) => {
-        return (
-            rowData?.actionStatus == "Received" ? <p>{getDateDifference(new Date(rowData?.expiryDate), new Date()) > 0 ? <span className='text-white p-1 rounded bg-green-400'>Valid</span> : <span className='text-white p-1 rounded bg-red-400'>Expired</span>}</p>
+            (rowData?.actionStatus == "Received" && rowData?.expiryDate) ? <p>{getDateDifference(new Date(rowData?.expiryDate), new Date()) > 0 ? <span className='text-white p-1 rounded bg-green-400'>{formatDate(rowData?.expiryDate)}</span> : <span className='text-white p-1 rounded bg-red-400'>{formatDate(rowData?.expiryDate)}</span>}</p>
                 :
                 <p>N/A</p>
         );
@@ -161,15 +166,16 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                         <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
                     </IconField>
                 </div>
-                <DataTable value={stock?.stockHistory} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['createdAt', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
-                    <Column field="voucherNo" header="Voucher No" sortable></Column>
-                    <Column field="actionStatus" header="Action Status" sortable></Column>
+                <DataTable value={stockHistoryData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['createdAt', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
+                    <Column field="serial" header="Ser. No."></Column>
+                    <Column field="voucherNo" header="Voucher No"></Column>
+                    <Column field="actionStatus" header="Action Status"></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
-                    <Column field="itemType" header="Type" sortable></Column>
+                    <Column field="itemType" header="Type"></Column>
                     <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
                     <Column body={aircraftUnitBodyTemplate} header="Aircraft" ></Column>
                     <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
-                    <Column body={expiryStatusBodyTemplate} header="Expiry Status"></Column>
+                    {/* <Column body={expiryStatusBodyTemplate} header="Expiry Status"></Column> */}
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
             </div>

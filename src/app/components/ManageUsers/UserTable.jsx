@@ -138,6 +138,7 @@ const UserTable = ({ users, filters, getAllUser }) => {
             <Toast ref={toast} />
             <div>
                 <DataTable value={users} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['name', 'email', 'role']} emptyMessage="No user found">
+                    <Column field="serial" header="Ser. No." sortable></Column>
                     <Column field="name" header="Name" sortable></Column>
                     <Column field="email" header="Email" sortable></Column>
                     <Column field="role" header="User Role" sortable></Column>

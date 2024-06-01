@@ -44,6 +44,7 @@ const Stock = ({ params: { stockId } }) => {
     const [actionStatus, setActionStatus] = useState(null);
     const [itemType, setItemType] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
+    const [issueDate, setIssueDate] = useState(null);
     const [loading, setLoading] = useState(false);
     const [allAircraftUnit, setAllAircraftUnit] = useState([]);
     const [selectedAircraftUnit, setSelectedAircraftUnit] = useState(null);
@@ -178,7 +179,7 @@ const Stock = ({ params: { stockId } }) => {
                     </div>
                 </div>
                 <div className='rounded-md'>
-                    <Image src={stock?.imageUrl} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md border' />
+                    <Image src={stock?.image ? stock?.image : stock?.imageUrl} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md border' />
                 </div>
             </div>
 
@@ -206,16 +207,14 @@ const Stock = ({ params: { stockId } }) => {
                             placeholder={"Select item type*"} size="small" className="w-full p-dropdown-sm" />
                         {errors.itemType?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.itemType.message}</span>}
                     </div>
-                    {
-                        itemType === 'New' &&
-                        <div className='w-full'>
-                            <Dropdown
-                                {...register("actionStatus", { required: "Action Status is required" })}
-                                value={actionStatus} onChange={(e) => setActionStatus(e.value)} options={[{ label: 'Received', value: 'Received' }, { label: 'Expenditure', value: 'Expenditure' }]} optionLabel="label"
-                                placeholder={"Select action status*"} size="small" className="w-full p-dropdown-sm" />
-                            {errors.actionStatus?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.actionStatus.message}</span>}
-                        </div>
-                    }
+
+                    <div className='w-full'>
+                        <Dropdown
+                            {...register("actionStatus", { required: "Action Status is required" })}
+                            value={actionStatus} onChange={(e) => setActionStatus(e.value)} options={[{ label: 'Received', value: 'Received' }, { label: 'Expenditure', value: 'Expenditure' }]} optionLabel="label"
+                            placeholder={"Select action status*"} size="small" className="w-full p-dropdown-sm" />
+                        {errors.actionStatus?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.actionStatus.message}</span>}
+                    </div>
                     {
                         actionStatus === 'Expenditure' &&
                         <div className='w-full'>
@@ -228,6 +227,23 @@ const Stock = ({ params: { stockId } }) => {
                     }
                     <div>
                         <Controller
+                            name="issueDate"
+                            control={control}
+                            render={({ field }) => (
+                                <Calendar
+                                    // value={date}
+                                    // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                    onChange={(e) => { setIssueDate(e.value); field.onChange(e.value) }}
+                                    placeholder={'Issue Date*'}
+                                    className='w-full p-inputtext-sm'
+                                    required
+                                />
+                            )}
+                        />
+                        {errors.issueDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.issueDate.message}</span>}
+                    </div>
+                    <div>
+                        <Controller
                             name="expiryDate"
                             control={control}
                             render={({ field }) => (
@@ -235,13 +251,11 @@ const Stock = ({ params: { stockId } }) => {
                                     // value={date}
                                     // {...register("expiryDate", { required: "Expiry Date is required" })}
                                     onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
-                                    placeholder={'Expiry Date*'}
+                                    placeholder={'Expiry Date'}
                                     className='w-full p-inputtext-sm'
-                                    required
                                 />
                             )}
                         />
-                        {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>}
                     </div>
                     <div className='w-full'>
                         <InputText

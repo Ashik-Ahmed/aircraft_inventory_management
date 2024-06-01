@@ -38,7 +38,7 @@ const Sidebar = () => {
         console.log(token);
         const data = await getLoggedInUser(token);
         console.log(data);
-        if (!data?.user) {
+        if (!data) {
             console.log("No user found");
             router.replace('/')
             router.push('/')

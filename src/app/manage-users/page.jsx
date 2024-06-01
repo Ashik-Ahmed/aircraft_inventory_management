@@ -80,6 +80,14 @@ const ManageUsers = () => {
             })
     }
 
+
+    const usersData = users?.map((item, index) => {
+        return {
+            serial: index + 1, // Add serial number property starting from 1
+            ...item
+        };
+    });
+
     useEffect(() => {
         getAllUser()
         getUser()
@@ -148,7 +156,7 @@ const ManageUsers = () => {
                             <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
                         </IconField>
                     </div>
-                    <UserTable users={users} filters={filters} getAllUser={getAllUser} />
+                    <UserTable users={usersData} filters={filters} getAllUser={getAllUser} />
                 </div>
 
                 {/* Create user dialog  */}

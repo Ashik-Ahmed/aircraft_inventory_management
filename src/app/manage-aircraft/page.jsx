@@ -62,6 +62,7 @@ const ManageAircraft = () => {
         setAllAircraft(allAircraft?.data);
     }
 
+
     const getAllAircraftUnit = () => {
         fetch('http://localhost:5000/api/v1/aircraftUnit', {
             method: 'GET',
@@ -82,6 +83,12 @@ const ManageAircraft = () => {
     }
 
 
+    const allAircraftUnitData = allAircraftUnit?.map((item, index) => {
+        return {
+            serial: index + 1, // Add serial number property starting from 1
+            ...item
+        };
+    });
 
     useEffect(() => {
         getAllAircraftData();
@@ -137,7 +144,7 @@ const ManageAircraft = () => {
                         </IconField>
                     </div>
                     {/* <UserTable users={users} filters={filters} getAllUser={getAllUser} /> */}
-                    <AircraftUnitTable allAircraftUnit={allAircraftUnit} filters={filters} getAllAircraftUnit={getAllAircraftUnit} />
+                    <AircraftUnitTable allAircraftUnit={allAircraftUnitData} filters={filters} getAllAircraftUnit={getAllAircraftUnit} />
                 </div>
 
                 {/* Create aircraft unit dialog  */}

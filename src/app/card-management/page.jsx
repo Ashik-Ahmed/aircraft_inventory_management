@@ -93,7 +93,7 @@ const CardManagement = () => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: 'Card Added', life: 3000 });
                 }
                 else {
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to Add', life: 3000 });
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: data?.error, life: 3000 });
                 }
             })
 
