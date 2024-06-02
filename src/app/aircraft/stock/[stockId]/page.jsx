@@ -95,6 +95,26 @@ const Stock = ({ params: { stockId } }) => {
             if (availableQuantity < stockHistory?.quantity) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: 'Not enough quantity in stock', life: 3000 });
             }
+            else {
+                fetch(`http://localhost:5000/api/v1/stockHistory`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(stockHistory)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.status == 'Success') {
+                            getStockDetails(stockId);
+                            toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
+                        }
+                        else {
+                            toast.current.show({ severity: 'error', summary: 'Error', detail: data.error, life: 3000 });
+                        }
+                    })
+            }
         }
         else {
             fetch(`http://localhost:5000/api/v1/stockHistory`, {
@@ -112,7 +132,7 @@ const Stock = ({ params: { stockId } }) => {
                         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
                     }
                     else {
-                        toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: data.error, life: 3000 });
                     }
                 })
         }

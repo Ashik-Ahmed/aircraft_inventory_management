@@ -116,7 +116,7 @@ const Report = () => {
 
     const latestExpiryBodyTemplate = (rowData) => {
         return (
-            rowData?.latestExpiry ? <p>{formatDate(rowData?.latestExpiry)}</p> : 'N/A'
+            rowData?.latestExpiry ? <p>{formatDate(rowData?.latestExpiry)}</p> : '--'
         )
     }
     const receivedBodyTemplate = (rowData) => {
