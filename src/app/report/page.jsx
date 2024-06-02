@@ -121,12 +121,12 @@ const Report = () => {
     }
     const receivedBodyTemplate = (rowData) => {
         return (
-            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) > - 30 && (getDateDifference(new Date(), new Date(stock?.expiryDate)) > 1 ? 'text-white rounded bg-red-400 mb-1' : 'text-white rounded bg-yellow-400 mb-1')} > {stock?.quantity}X{formatDate(stock?.createdAt)}</ p > : null)
+            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Received' ? <p key={stock?._id} className={getDateDifference(new Date(), new Date(stock?.expiryDate)) > - 30 && (getDateDifference(new Date(), new Date(stock?.expiryDate)) > 1 ? 'text-white rounded bg-red-400 mb-1' : 'text-white rounded bg-yellow-400 mb-1')} > {stock?.quantity}X{stock?.issueDate ? formatDate(stock?.issueDate) : ' --'}</ p > : null)
         )
     }
     const expenditureBodyTemplate = (rowData) => {
         return (
-            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Expenditure' ? <p key={stock?._id}>{stock?.quantity}X{formatDate(stock?.createdAt)}</p> : null)
+            rowData?.stockHistory?.map((stock) => stock?.actionStatus == 'Expenditure' ? <p key={stock?._id}>{stock?.quantity}X{stock?.issueDate ? formatDate(stock?.issueDate) : ' --'}</p> : null)
         )
     }
 
