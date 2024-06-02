@@ -183,7 +183,6 @@ const Report = () => {
                             <Button type='submit' icon="pi pi-send" severity='primary' size='small' />
                         </form>
 
-
                         <IconField iconPosition="left">
                             <InputIcon className="pi pi-search" />
                             <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />

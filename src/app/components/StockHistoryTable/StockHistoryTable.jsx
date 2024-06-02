@@ -56,7 +56,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
     const dateBodyTemplate = (rowData) => {
         return (
             // <span className="p-column-title">{formatDate(rowData.createdAt)}</span>
-            <p>{formatDate(rowData?.createdAt)}</p>
+            <p>{rowData?.issueDate ? formatDate(rowData?.issueDate) : 'N/A'}</p>
         );
     }
     const aircraftUnitBodyTemplate = (rowData) => {
@@ -172,7 +172,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                     <Column field="actionStatus" header="Action Status"></Column>
                     <Column field="quantity" header="Quantity" sortable></Column>
                     <Column field="itemType" header="Type"></Column>
-                    <Column body={dateBodyTemplate} header="Date" sortField='createdAt' sortable></Column>
+                    <Column body={dateBodyTemplate} header="Issue Date" sortField='issueDate' sortable></Column>
                     <Column body={aircraftUnitBodyTemplate} header="Aircraft" ></Column>
                     <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
                     {/* <Column body={expiryStatusBodyTemplate} header="Expiry Status"></Column> */}

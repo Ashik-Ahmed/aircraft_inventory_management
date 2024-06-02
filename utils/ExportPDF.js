@@ -34,7 +34,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
 
                 // Determine the orientation based on the total width of headings
                 const pageWidth = tempDoc.internal.pageSize.width || tempDoc.internal.pageSize.getWidth();
-                const orientation = totalHeadingWidth > pageWidth ? 'landscape' : 'portrait';
+                const orientation = totalHeadingWidth > (pageWidth - 80) ? 'landscape' : 'portrait';
 
                 // Create the actual document with the determined orientation
                 const doc = new jsPDF.default(orientation, 'pt');
