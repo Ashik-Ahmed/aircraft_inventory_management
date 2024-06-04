@@ -11,10 +11,10 @@ exports.exportStockReport = async (stockDetailsReport) => {
     let customizedStockReport = stockDetailsReport?.stockReport?.map((stock, index) => {
         const customizedlatestExpiry = stock?.latestExpiry ? formatDate(stock?.latestExpiry) : 'N/A';
         const customizedReceived = stock?.stockHistory?.filter((history) => history?.actionStatus == 'Received')
-            .map((stock) => `${stock?.quantity}X${formatDate(stock?.createdAt)}`)
+            .map((stock) => `${stock?.quantity}X${stock?.issueDate ? formatDate(stock?.issueDate) : '--'}`)
             .join('\n');
         const customizedExpenditure = stock?.stockHistory?.filter((history) => history?.actionStatus == 'Expenditure')
-            .map((stock) => `${stock?.quantity}X${formatDate(stock?.createdAt)}`)
+            .map((stock) => `${stock?.quantity}X${stock?.issueDate ? formatDate(stock?.issueDate) : '--'}`)
             .join('\n');
         return { serial: index + 1, ...stock, latestExpiry: customizedlatestExpiry, received: customizedReceived, expenditure: customizedExpenditure }
     })
