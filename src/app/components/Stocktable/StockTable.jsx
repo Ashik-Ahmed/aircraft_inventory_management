@@ -26,6 +26,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
     const [editStock, setEditStock] = useState(false);
     const [deleteStock, setDeleteStock] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
+    const [selectedCard, setSelectedCard] = useState(null)
     const [date, setDate] = useState(null);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
@@ -69,12 +70,19 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
 
     const handleUpdateStock = (data) => {
 
+        if (selectedCard) {
+            data.nomenclature = selectedCard?.nomenclature;
+            data.stockNo = selectedCard?.stockNo[0][0];
+        }
+
         const updatedStockData = Object.entries(data).reduce((acc, [key, value]) => {
             if (value) {
                 acc[key] = value;
             }
             return acc;
         }, {});
+
+        console.log(updatedStockData);
 
         fetch(`http://localhost:5000/api/v1/stock/${editStock?._id}`, {
             method: 'PATCH',
@@ -97,6 +105,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
 
         setEditStock(false);
         setSelectedUnit(null);
+        setSelectedCard(null);
         reset();
     }
 
@@ -171,7 +180,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
             </div>
 
             {/* Edit Stock Dialog  */}
-            <Dialog header="Update Stock" visible={editStock} onHide={() => { setEditStock(false); setSelectedUnit(null); }}
+            <Dialog header="Update Stock" visible={editStock} onHide={() => { setEditStock(false); setSelectedUnit(null); setSelectedCard(null); reset(); }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleUpdateStock)} className="flex flex-col gap-2 mt-4">
 
@@ -181,14 +190,26 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                         <p className='text-lg text-gray-700'>Aircraft Name: <span>{aircraft?.aircraftName}</span></p>
                     </div>
                     <div className='w-full'>
-                        <InputText
+                        <Dropdown
                             {...register("cardNo")}
-                            placeholder={editStock?.cardNo || "Card No.*"} className='w-full p-inputtext-sm' />
+                            value={selectedCard} onChange={(e) => setSelectedCard(e.value)} options={aircraft?.cardInfo} optionLabel="cardNo"
+                            placeholder={editStock?.cardNo || "Select a Card"} size="small" className="w-full p-dropdown-sm" />
                     </div>
                     <div className='w-full'>
                         <InputText
                             {...register("stockNo")}
-                            placeholder={editStock?.stockNo || "Stock/Parts No.*"} className='w-full p-inputtext-sm' />
+                            value={selectedCard?.stockNo}
+                            placeholder={editStock?.stockNo || "Stock/Parts No.*"}
+                            className='w-full p-inputtext-sm'
+                            disabled />
+                    </div>
+                    <div className='w-full'>
+                        <InputText
+                            {...register("nomenclature")}
+                            value={selectedCard?.nomenclature}
+                            placeholder={editStock?.nomenclature || "Nomenclature*"}
+                            className='w-full p-inputtext-sm'
+                            disabled />
                     </div>
                     <div className='w-full'>
                         <Dropdown
@@ -198,8 +219,8 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                     </div>
                     <div className='w-full'>
                         <InputText
-                            {...register("nomenclature")}
-                            placeholder={editStock?.nomenclature || "Nomenclature*"} className='w-full p-inputtext-sm' />
+                            {...register("minimumQuantity")}
+                            placeholder={editStock?.minimumQuantity || "Minimum Qty.*"} type='number' className='w-full p-inputtext-sm' />
                     </div>
                     <div className='w-full'>
                         <InputText
@@ -214,7 +235,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                                 // value={date}
                                 dateFormat='dd-mm-yy'
                                 onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
-                                placeholder={editStock?.issuedAt?.split("T")[0] || 'Issue date'}
+                                placeholder={editStock?.issuedAt ? formatDate(editStock?.issuedAt) : 'Issue date'}
                                 className='w-full p-inputtext-sm'
                             />
                         )}
