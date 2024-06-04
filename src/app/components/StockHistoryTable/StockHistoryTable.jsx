@@ -12,6 +12,7 @@ import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate, getDateDifference } from '../../../../utils/dateFunctionality';
+import StockHistoryExportDialog from '../ReportExportDialog/StockHistoryExportDialog';
 
 const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selectedAircraftUnitOptionTemplate, aircraftUnitOptionTemplate, allAircraftUnit }) => {
     console.log(stock);
@@ -27,7 +28,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
     const [selectedAircraftUnit, setSelectedAircraftUnit] = useState(null);
     const [issueDate, setIssueDate] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
-
+    const [exportDialog, setExportDialog] = useState(false);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -172,6 +173,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Stock History</h3>
                         <Button onClick={() => setAddStockHistory(true)} label='Add' icon="pi pi-plus" size='small' aria-label='Add' />
+                        <Button onClick={() => setExportDialog(true)} icon="pi pi-file-pdf" severity='danger' size='small' text aria-label='Export' />
                     </div>
 
                     <IconField iconPosition="left">
@@ -192,6 +194,10 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
             </div>
+
+            {
+                exportDialog && <StockHistoryExportDialog exportDialog={exportDialog} setExportDialog={setExportDialog} stockHistory={stockHistoryData} />
+            }
 
             {/* Edit Stock History  */}
             <Dialog header="Update Stock History" visible={updateStockHistory} onHide={() => { setUpdateStockHistory(false); setActionStatus(null); setItemType(null); setSelectedAircraftUnit(null); reset(); }}
