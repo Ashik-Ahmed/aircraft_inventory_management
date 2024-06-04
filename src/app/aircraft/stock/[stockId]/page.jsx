@@ -203,10 +203,10 @@ const Stock = ({ params: { stockId } }) => {
                 </div>
             </div>
 
-            <StockHistoryTable stock={stock} setAddStockHistory={setAddStockHistory} getStockDetails={getStockDetails} />
+            <StockHistoryTable stock={stock} setAddStockHistory={setAddStockHistory} getStockDetails={getStockDetails} selectedAircraftUnitOptionTemplate={selectedAircraftUnitOptionTemplate} aircraftUnitOptionTemplate={aircraftUnitOptionTemplate} allAircraftUnit={allAircraftUnit} />
 
 
-            {/* Add Stoc History  */}
+            {/* Add Stock History  */}
             <Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); setSelectedAircraftUnit(null); setItemType(null); setActionStatus(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddStockHistory)} className="flex flex-col gap-2 mt-4">

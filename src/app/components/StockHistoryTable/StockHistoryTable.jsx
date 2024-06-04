@@ -13,7 +13,7 @@ import React, { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate, getDateDifference } from '../../../../utils/dateFunctionality';
 
-const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
+const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selectedAircraftUnitOptionTemplate, aircraftUnitOptionTemplate, allAircraftUnit }) => {
     console.log(stock);
     const toast = useRef(null);
 
@@ -23,6 +23,9 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
     const [deleteStockHistory, setDeleteStockHistory] = useState(false);
     const [updateStockHistory, setUpdateStockHistory] = useState(false);
     const [actionStatus, setActionStatus] = useState(null);
+    const [itemType, setItemType] = useState(null);
+    const [selectedAircraftUnit, setSelectedAircraftUnit] = useState(null);
+    const [issueDate, setIssueDate] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
 
 
@@ -116,8 +119,9 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
 
     const handleUpdateStockHistory = (data) => {
 
-        if (data?.actionStatus == 'Expenditure') {
+        if (data?.actionStatus == 'Expenditure' || updateStockHistory?.actionStatus == 'Expenditure') {
             data.expiryDate = '';
+            data.aircraftUnit = selectedAircraftUnit?._id
         }
 
         const updatedStockHistory = Object.entries(data).reduce((acc, [key, value]) => {
@@ -126,6 +130,12 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
             }
             return acc;
         }, {});
+        console.log(updatedStockHistory);
+
+        if (updatedStockHistory?.quantity <= 0) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Quantity should be greater than 0', life: 3000 });
+            return;
+        }
 
         fetch(`http://localhost:5000/api/v1/stockHistory/${updateStockHistory?._id}`, {
             method: 'PATCH',
@@ -141,12 +151,15 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Updated', life: 3000 });
                 }
                 else {
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: data.error, life: 3000 });
                 }
                 console.log(data);
             })
 
         setUpdateStockHistory(false);
+        setItemType(null);
+        setActionStatus(null);
+        setSelectedAircraftUnit(null);
         reset();
     }
 
@@ -181,7 +194,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
             </div>
 
             {/* Edit Stock History  */}
-            <Dialog header="Update Stock History" visible={updateStockHistory} onHide={() => { setUpdateStockHistory(false); setActionStatus(null); reset() }}
+            <Dialog header="Update Stock History" visible={updateStockHistory} onHide={() => { setUpdateStockHistory(false); setActionStatus(null); setItemType(null); setSelectedAircraftUnit(null); reset(); }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleUpdateStockHistory)} className="flex flex-col gap-2 mt-4">
 
@@ -194,31 +207,58 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                     </div>
                     <div className='w-full'>
                         <Dropdown
+                            {...register("itemType")}
+                            value={itemType} onChange={(e) => setItemType(e.value)} options={[{ label: 'New', value: 'New' }, { label: 'Used', value: 'Used' }]} optionLabel="label"
+                            placeholder={updateStockHistory?.itemType || "Select item type"} size="small" className="w-full p-dropdown-sm" />
+                    </div>
+                    <div className='w-full'>
+                        <Dropdown
                             {...register("actionStatus")}
                             value={actionStatus} onChange={(e) => setActionStatus(e.value)} options={[{ label: 'Received', value: 'Received' }, { label: 'Expenditure', value: 'Expenditure' }]} optionLabel="label"
                             placeholder={updateStockHistory?.actionStatus || "Select action status"} size="small" className="w-full p-dropdown-sm" />
                     </div>
-
                     {
-                        (actionStatus || updateStockHistory?.actionStatus) == 'Received' &&
-                        <div>
-                            <Controller
-                                name="expiryDate"
-                                control={control}
-                                render={({ field }) => (
-                                    <Calendar
-                                        // value={date}
-                                        // {...register("expiryDate", { required: "Expiry Date is required" })}
-                                        dateFormat='dd-mm-yy'
-                                        onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
-                                        placeholder={formatDate(updateStockHistory?.expiryDate) || 'Expiry Date'}
-                                        className='w-full p-inputtext-sm'
-                                    />
-                                )}
-                            />
-                            {/* {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>} */}
+                        (updateStockHistory?.actionStatus === 'Expenditure' || actionStatus === 'Expenditure') &&
+                        <div className='w-full'>
+                            <Dropdown
+                                {...register("aircraftUnit")}
+                                value={selectedAircraftUnit} valueTemplate={selectedAircraftUnitOptionTemplate} itemTemplate={aircraftUnitOptionTemplate} onChange={(e) => setSelectedAircraftUnit(e.value)} options={allAircraftUnit} optionLabel="aircraftName"
+                                placeholder={updateStockHistory?.aircraftUnit?.aircraft?.aircraftName || "Select aircraft unit"} size="small" className="w-full p-dropdown-sm" />
                         </div>
                     }
+                    <div>
+                        <Controller
+                            name="issueDate"
+                            control={control}
+                            render={({ field }) => (
+                                <Calendar
+                                    // value={date}
+                                    // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                    dateFormat='dd-mm-yy'
+                                    onChange={(e) => { setIssueDate(e.value); field.onChange(e.value) }}
+                                    placeholder={updateStockHistory?.issueDate ? formatDate(updateStockHistory?.issueDate) : 'Issue Date'}
+                                    className='w-full p-inputtext-sm'
+                                />
+                            )}
+                        />
+                    </div>
+                    <div>
+                        <Controller
+                            name="expiryDate"
+                            control={control}
+                            render={({ field }) => (
+                                <Calendar
+                                    // value={date}
+                                    // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                    dateFormat='dd-mm-yy'
+                                    onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
+                                    placeholder={updateStockHistory?.expiryDate ? formatDate(updateStockHistory?.expiryDate) : 'Expiry Date'}
+                                    className='w-full p-inputtext-sm'
+                                />
+                            )}
+                        />
+                        {/* {errors.expiryDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.expiryDate.message}</span>} */}
+                    </div>
                     <div className='w-full'>
                         <InputText
                             {...register("quantity")}
