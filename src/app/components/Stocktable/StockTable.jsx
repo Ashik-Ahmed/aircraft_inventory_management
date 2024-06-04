@@ -125,7 +125,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
 
     const latestExpiryBodyTemplate = (rowData) => {
         return (
-            <p>{rowData?.latestExpiry ? formatDate(rowData?.latestExpiry) : 'N/A'}</p>
+            <p>{rowData?.latestExpiry ? formatDate(rowData?.latestExpiry) : '--'}</p>
         );
     }
 

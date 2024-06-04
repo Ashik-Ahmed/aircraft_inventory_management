@@ -56,20 +56,20 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
     const dateBodyTemplate = (rowData) => {
         return (
             // <span className="p-column-title">{formatDate(rowData.createdAt)}</span>
-            <p>{rowData?.issueDate ? formatDate(rowData?.issueDate) : 'N/A'}</p>
+            <p>{rowData?.issueDate ? formatDate(rowData?.issueDate?.toLocaleString("en-US", { timeZone: "Asia/Dhaka" })) : '--'}</p>
         );
     }
     const aircraftUnitBodyTemplate = (rowData) => {
         return (
             <div>
-                <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "N/A"}</p>
+                <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "--"}</p>
                 <p className='text-xs'>{rowData?.aircraftUnit?.regNo ? `Reg.: ${rowData?.aircraftUnit?.regNo}` : null}</p>
             </div>
         );
     }
     // const expiryDateBodyTemplate = (rowData) => {
     //     return (
-    //         rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : 'N/A'
+    //         rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : '--'
     //     );
     // }
 
@@ -77,7 +77,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
         return (
             (rowData?.actionStatus == "Received" && rowData?.expiryDate) ? <p>{getDateDifference(new Date(rowData?.expiryDate), new Date()) > 0 ? <span className='text-white p-1 rounded bg-green-400'>{formatDate(rowData?.expiryDate)}</span> : <span className='text-white p-1 rounded bg-red-400'>{formatDate(rowData?.expiryDate)}</span>}</p>
                 :
-                <p>N/A</p>
+                <p>--</p>
         );
     }
 

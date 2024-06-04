@@ -188,14 +188,14 @@ const Stock = ({ params: { stockId } }) => {
                 <div>
                     <h3 className='text-lg uppercase text-gray-700'>Stock Details</h3>
                     <div className='mt-4 flex flex-col gap-2'>
-                        <p>Stock: {stock?.nomenclature || 'N/A'}</p>
-                        <p>Aircraft Name: {stock?.aircraftId?.aircraftName || 'N/A'}</p>
-                        <p>Available Qty: {availableQuantity || 'N/A'} {availableQuantity < stock?.minimumQuantity && <span className='text-white bg-red-500 rounded-md p-1'>Low Stock</span>}</p>
-                        <p>Card No.: {stock?.cardNo || 'N/A'}</p>
-                        <p>Stock/Part No.: {stock?.stockNo || 'N/A'}</p>
-                        <p>Unit: {stock?.unit || 'N/A'}</p>
-                        <p>Issued At: {stock?.issuedAt ? formatDate(stock?.issuedAt) : 'N/A'}</p>
-                        <p>Location: {stock?.location || 'N/A'}</p>
+                        <p>Stock: {stock?.nomenclature || '--'}</p>
+                        <p>Aircraft Name: {stock?.aircraftId?.aircraftName || '--'}</p>
+                        <p>Available Qty: {availableQuantity || '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white bg-red-500 rounded-md p-1'>Low Stock</span>}</p>
+                        <p>Card No.: {stock?.cardNo || '--'}</p>
+                        <p>Stock/Part No.: {stock?.stockNo || '--'}</p>
+                        <p>Unit: {stock?.unit || '--'}</p>
+                        <p>Issued At: {stock?.issuedAt ? formatDate(stock?.issuedAt) : '--'}</p>
+                        <p>Location: {stock?.location || '--'}</p>
                     </div>
                 </div>
                 <div className='rounded-md'>

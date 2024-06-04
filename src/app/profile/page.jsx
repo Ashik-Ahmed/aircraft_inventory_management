@@ -90,27 +90,27 @@ const ProfilePage = () => {
                         </div>
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Email</p>
-                            <span className='w-2/3'>: {user?.email || 'N/A'}</span>
+                            <span className='w-2/3'>: {user?.email || '--'}</span>
                         </div>
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>user Id</p>
-                            <span className='w-2/3'>: {user?.userId || 'N/A'}</span>
+                            <span className='w-2/3'>: {user?.userId || '--'}</span>
                         </div>
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Role</p>
-                            <span className='w-2/3'>: {user?.role || 'N/A'}</span>
+                            <span className='w-2/3'>: {user?.role || '--'}</span>
                         </div>
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Designation</p>
-                            <span className='w-2/3'>: {user?.designation || 'N/A'}</span>
+                            <span className='w-2/3'>: {user?.designation || '--'}</span>
                         </div>
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Joining date</p>
-                            <span className='w-2/3'>: {formatDate(user?.createdAt) || 'N/A'}</span>
+                            <span className='w-2/3'>: {formatDate(user?.createdAt) || '--'}</span>
                         </div>
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Phone</p>
-                            <span className='w-2/3'>: {user?.mobile || 'N/A'}</span>
+                            <span className='w-2/3'>: {user?.mobile || '--'}</span>
                         </div>
                         <div className='mt-2'>
                             <p onClick={() => setChangePassword(true)} className='cursor-pointer link inline text-red-500'>Change Password</p>

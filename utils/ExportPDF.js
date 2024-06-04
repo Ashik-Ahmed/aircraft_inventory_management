@@ -9,7 +9,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
         ...stockDetailsReport?.selectedColumns?.map(col => ({ title: col.header, dataKey: col.field }))]
 
     let customizedStockReport = stockDetailsReport?.stockReport?.map((stock, index) => {
-        const customizedlatestExpiry = stock?.latestExpiry ? formatDate(stock?.latestExpiry) : 'N/A';
+        const customizedlatestExpiry = stock?.latestExpiry ? formatDate(stock?.latestExpiry) : '--';
         const customizedReceived = stock?.stockHistory?.filter((history) => history?.actionStatus == 'Received')
             .map((stock) => `${stock?.quantity}X${stock?.issueDate ? formatDate(stock?.issueDate) : '--'}`)
             .join('\n');
