@@ -212,6 +212,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                         render={({ field }) => (
                             <Calendar
                                 // value={date}
+                                dateFormat='dd-mm-yy'
                                 onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
                                 placeholder={editStock?.issuedAt?.split("T")[0] || 'Issue date'}
                                 className='w-full p-inputtext-sm'

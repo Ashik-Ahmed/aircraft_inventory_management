@@ -253,6 +253,7 @@ const Stock = ({ params: { stockId } }) => {
                                 <Calendar
                                     // value={date}
                                     // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                    dateFormat='dd-mm-yy'
                                     onChange={(e) => { setIssueDate(e.value); field.onChange(e.value) }}
                                     placeholder={'Issue Date*'}
                                     className='w-full p-inputtext-sm'
@@ -270,6 +271,7 @@ const Stock = ({ params: { stockId } }) => {
                                 <Calendar
                                     // value={date}
                                     // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                    dateFormat='dd-mm-yy'
                                     onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
                                     placeholder={'Expiry Date'}
                                     className='w-full p-inputtext-sm'

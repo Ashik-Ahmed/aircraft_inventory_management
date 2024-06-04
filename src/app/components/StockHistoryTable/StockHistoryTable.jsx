@@ -209,6 +209,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory }) => {
                                     <Calendar
                                         // value={date}
                                         // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                        dateFormat='dd-mm-yy'
                                         onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
                                         placeholder={formatDate(updateStockHistory?.expiryDate) || 'Expiry Date'}
                                         className='w-full p-inputtext-sm'

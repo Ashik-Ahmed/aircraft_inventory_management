@@ -154,6 +154,7 @@ const Report = () => {
                                     render={({ field }) => (
                                         <Calendar
                                             // value={date}
+                                            dateFormat='dd-mm-yy'
                                             onChange={(e) => { setExpiryStartDate(e.value); field.onChange(e.value) }}
                                             placeholder='Expiry Start Date'
                                             className='w-full p-inputtext-sm'
@@ -166,6 +167,7 @@ const Report = () => {
                                     render={({ field }) => (
                                         <Calendar
                                             // value={date}
+                                            dateFormat='dd-mm-yy'
                                             onChange={(e) => { setExpiryEndDate(e.value); field.onChange(e.value) }}
                                             placeholder='Expiry End Date'
                                             className='w-full p-inputtext-sm'

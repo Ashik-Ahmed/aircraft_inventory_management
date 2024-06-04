@@ -262,6 +262,7 @@ const Aircraft = ({ params: { id } }) => {
                         render={({ field }) => (
                             <Calendar
                                 // value={date}
+                                dateFormat='dd-mm-yy'
                                 onChange={(e) => { setDate(e.value); field.onChange(e.value) }}
                                 placeholder='Issue date'
                                 className='w-full p-inputtext-sm'
