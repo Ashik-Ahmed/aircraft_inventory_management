@@ -13,6 +13,9 @@ import { getAllAircraft } from '../../../lib/Aircraft';
 import { useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
 import { getLoggedInUser } from '../../../lib/User';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { FilterMatchMode } from 'primereact/api';
 
 const CardManagement = () => {
 
@@ -34,18 +37,42 @@ const CardManagement = () => {
     const [cards, setCards] = useState([]);
     const [addCard, setAddCard] = useState(false);
     const [aircraft, setAircraft] = useState(null)
-    const [selectedAircraft, setSelectedAircraft] = useState(null)
+    const [selectedAircraft, setSelectedAircraft] = useState(null);
+    const [filterAircraftOptions, setFilterAircraftOptions] = useState([]);
+    const [filterAircraft, setFilterAircraft] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        aircraft: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        cardNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        stockNo: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        nomenclature: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
+
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
+
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
+    };
 
     const getAllAircraftData = async () => {
         console.log("inside all aircraft");
         const aircraftData = await getAllAircraft();
-        console.log(aircraftData);
+        // console.log(aircraftData);
         setAircraft(aircraftData?.data)
+
+        setFilterAircraftOptions(aircraftData?.data)
+        filterAircraftOptions.unshift({ _id: "", aircraftName: "All" })
     }
 
     const getAllCardInfo = async () => {
-        fetch('http://localhost:5000/api/v1/cardInfo', {
+        fetch(`http://localhost:5000/api/v1/cardInfo?aircraftId=${filterAircraft?._id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -64,7 +91,7 @@ const CardManagement = () => {
         getAllCardInfo();
         getAllAircraftData();
         getUser()
-    }, []);
+    }, [filterAircraft]);
 
     const cardData = cards?.map((item, index) => {
         return {
@@ -99,6 +126,7 @@ const CardManagement = () => {
 
         setLoading(false);
         setAddCard(false);
+        setSelectedAircraft(null);
         reset();
     }
 
@@ -106,16 +134,27 @@ const CardManagement = () => {
         <div>
             <Toast ref={toast} />
             <div className='p-1 bg-white rounded-md shadow-md'>
-                <div>
+                <div className='flex items-center justify-between'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Manage Cards</h3>
                         <Button onClick={() => setAddCard(true)} icon="pi pi-plus" severity='Success' size='small' text />
                     </div>
+                    <div className='flex items-center gap-x-2'>
+                        <div>
+                            <Dropdown value={filterAircraft} onChange={(e) => setFilterAircraft(e.value)} options={filterAircraftOptions} optionLabel="aircraftName" placeholder=" Select Aircraft" size="small" className="w-full p-dropdown-sm" />
+                        </div>
+                        <div>
+                            <IconField iconPosition="left">
+                                <InputIcon className="pi pi-search" />
+                                <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
+                            </IconField>
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <DataTable value={cardData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" emptyMessage="No card found">
+                    <DataTable value={cardData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" filters={filters} globalFilterFields={['aircraft', 'cardNo', 'stockNo', 'nomenclature']} emptyMessage="No card found">
                         <Column field="serial" header="Ser. No."></Column>
-                        <Column body={(rowData) => rowData?.aircraft?.aircraftName} header="Aircraft Name" sortable></Column>
+                        <Column body={(rowData) => rowData?.aircraft?.aircraftName} header="Aircraft Name" ></Column>
                         <Column field="cardNo" header="Card No." sortable></Column>
                         <Column field="stockNo" header="Part No" sortable></Column>
                         <Column field="nomenclature" header="Nomenclature" sortable></Column>
@@ -124,7 +163,7 @@ const CardManagement = () => {
             </div>
 
             {/* Create Card dialog  */}
-            <Dialog header="Add New Card" visible={addCard} onHide={() => { setAddCard(false); reset() }}
+            <Dialog header="Add New Card" visible={addCard} onHide={() => { setAddCard(false); setSelectedAircraft(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddCard)} className="flex flex-col gap-2 mt-4">
                     <div className='w-full'>

@@ -15,7 +15,7 @@ import { formatDate, getDateDifference } from '../../../../utils/dateFunctionali
 import StockHistoryExportDialog from '../ReportExportDialog/StockHistoryExportDialog';
 
 const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selectedAircraftUnitOptionTemplate, aircraftUnitOptionTemplate, allAircraftUnit }) => {
-    console.log(stock);
+    // console.log(stock);
     const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();

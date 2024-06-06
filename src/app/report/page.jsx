@@ -193,7 +193,7 @@ const Report = () => {
                 </div>
                 <DataTable value={stockReportData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['nomenclature', 'stockNo', 'unit', 'cardNo', 'quantity']} emptyMessage="No stock report" className='p-datatable-sm text-sm'>
                     <Column field="serial" header="Ser No."></Column>
-                    <Column field="cardNo" header="Card No."></Column>
+                    <Column field="cardNo" header="Card No." sortable></Column>
                     <Column field="stockNo" header="Part No"></Column>
                     <Column field="nomenclature" header="Nomenclature" sortable></Column>
                     <Column field="unit" header="A/U"></Column>
