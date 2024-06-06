@@ -67,8 +67,10 @@ const CardManagement = () => {
         // console.log(aircraftData);
         setAircraft(aircraftData?.data)
 
-        setFilterAircraftOptions(aircraftData?.data)
-        filterAircraftOptions.unshift({ _id: "", aircraftName: "All" })
+        if (aircraftData?.data) {
+            aircraftData?.data.unshift({ _id: "", aircraftName: "All" })
+            setFilterAircraftOptions(aircraftData?.data)
+        }
     }
 
     const getAllCardInfo = async () => {
