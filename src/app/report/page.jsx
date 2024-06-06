@@ -132,11 +132,11 @@ const Report = () => {
 
     return (
         <div>
-            {/* <div>
+            <div>
                 <div className='w-1/3 mb-2'>
                     <Dropdown value={selectedAircraft} onChange={(e) => setSelectedAircraft(e.value)} options={allAircraft} optionLabel="aircraftName" placeholder="Select Aircraft" size="small" className="w-full p-dropdown-sm" />
                 </div>
-            </div> */}
+            </div>
             <div className='bg-white shadow-md p-2 rounded-md'>
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
