@@ -51,27 +51,26 @@ const ProfilePage = () => {
 
     const handleChangePassword = (data) => {
 
-        // fetch(`http://localhost:5000/api/v1/employee/updatePassword/${employee?.email}`, {
-        //     method: "PATCH",
-        //     headers: {
-        //         "content-type": "application/json",
-        //         "Authorization": `Bearer ${accessToken}`
-        //     },
-        //     body: JSON.stringify(data)
-        // })
-        //     .then(res => res.json())
-        //     .then((data => {
-        //         if (data.status == "Success") {
-        //             setChangePassword(false)
-        //             reset()
-        //             toast.current.show({ severity: 'success', summary: 'Success', detail: 'Password Updated', life: 3000 });
-        //         }
-        //         else {
-        //             console.log("Failed to update password");
-        //             console.log(data.error);
-        //             toast.current.show({ severity: 'error', summary: 'Failed!', detail: `${data.error}`, life: 3000 });
-        //         }
-        //     }))
+        fetch(`http://localhost:5000/api/v1/user/updatePassword/${user?._id}`, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then((data => {
+                if (data.status == "Success") {
+                    setChangePassword(false)
+                    reset()
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Password Updated', life: 3000 });
+                }
+                else {
+                    console.log("Failed to update password");
+                    console.log(data.error);
+                    toast.current.show({ severity: 'error', summary: 'Failed!', detail: `${data.error}`, life: 3000 });
+                }
+            }))
 
     }
 
