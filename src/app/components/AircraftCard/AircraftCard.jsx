@@ -6,11 +6,11 @@ import aircraft from '../../../assets/images/aircraft.jpg'
 import Link from "next/link";
 
 const AircraftCard = ({ aircraft }) => {
-    const { _id, aircraftName, image, imageAlt = 'Aircraft Image' } = aircraft
+    const { _id, aircraftName, imageUrl, imageAlt = 'Aircraft Image' } = aircraft
     return (
         <Link href={`/aircraft/${_id}`} className="relative rounded-md border shadow-md hover:shadow-xl hover:shadow-blue-200 hover:scale-110 duration-100">
             <Image
-                src={image.includes('uploads') ? 'http://localhost:5000' + image : image}
+                src={imageUrl}
                 alt={imageAlt}
                 width={220}
                 height={220}
