@@ -16,6 +16,7 @@ import { getLoggedInUser } from '../../../lib/User';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { FilterMatchMode } from 'primereact/api';
+import CardManagementTable from '../components/CardManagementTable/CardManagementTable';
 
 const CardManagement = () => {
 
@@ -153,15 +154,7 @@ const CardManagement = () => {
                         </div>
                     </div>
                 </div>
-                <div>
-                    <DataTable value={cardData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" filters={filters} globalFilterFields={['aircraft', 'cardNo', 'stockNo', 'nomenclature']} emptyMessage="No card found">
-                        <Column field="serial" header="Ser. No."></Column>
-                        <Column body={(rowData) => rowData?.aircraft?.aircraftName} header="Aircraft Name" ></Column>
-                        <Column field="cardNo" header="Card No." sortable></Column>
-                        <Column field="stockNo" header="Part No" sortable></Column>
-                        <Column field="nomenclature" header="Nomenclature" sortable></Column>
-                    </DataTable>
-                </div>
+                <CardManagementTable cardData={cardData} filters={filters} aircraft={aircraft} />
             </div>
 
             {/* Create Card dialog  */}

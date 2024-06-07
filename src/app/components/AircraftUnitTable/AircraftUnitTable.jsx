@@ -9,7 +9,7 @@ import { InputText } from 'primereact/inputtext';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const AircraftUnitTable = ({ allAirraft, allAircraftUnit, filters, getAllAircraftUnit }) => {
+const AircraftUnitTable = ({ allAirraft, allAircraftUnit, filters }) => {
 
     const toast = useRef(null);
 
