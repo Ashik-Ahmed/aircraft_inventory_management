@@ -5,10 +5,11 @@ import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
+import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-const CardManagementTable = ({ cardData, filters, aircraft }) => {
+const CardManagementTable = ({ cardData, filters, aircraft, getAllCardInfo }) => {
 
     const toast = useRef(null);
 
@@ -21,10 +22,66 @@ const CardManagementTable = ({ cardData, filters, aircraft }) => {
 
     const handleUpdateCard = (data) => {
         console.log(data);
+        setLoading(true);
+        const updatedCardData = Object.entries(data).reduce((acc, [key, value]) => {
+            if (value) {
+                acc[key] = value;
+            }
+            return acc;
+        }, {});
+
+        console.log(updatedCardData);
+
+        fetch(`http://localhost:5000/api/v1/cardInfo/${updateCard?._id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedCardData)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('card update:', data);
+                if (data.status === 'Success') {
+                    getAllCardInfo();
+                    toast.current.show({ severity: 'success', summary: 'Card Updated', detail: 'Card updated successfully', life: 3000 });
+                }
+                else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: data?.error, life: 3000 });
+                }
+            })
+
+        setLoading(false);
+        setUpdateCard(false);
+        setSelectedAircraft(null);
+        reset();
+        setLoading(false);
     }
 
     const handleDeleteCard = () => {
         console.log(deleteCard);
+        setLoading(true);
+        fetch(`http://localhost:5000/api/v1/cardInfo/${deleteCard?._id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                if (data.status === 'Success') {
+                    getAllCardInfo();
+                    toast.current.show({ severity: 'success', summary: 'Card Deleted', detail: 'Card deleted successfully', life: 3000 });
+                }
+                else {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: data?.error, life: 3000 });
+                }
+            })
+
+        setLoading(false);
+        setDeleteCard(false);
+
     }
 
     const actionBodyTemplate = (rowData) => {
@@ -38,6 +95,7 @@ const CardManagementTable = ({ cardData, filters, aircraft }) => {
 
     return (
         <div>
+            <Toast ref={toast} />
             <div>
                 <DataTable value={cardData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filterDisplay="menu" filters={filters} globalFilterFields={['aircraft', 'cardNo', 'stockNo', 'nomenclature']} emptyMessage="No card found">
                     <Column field="serial" header="Ser. No."></Column>
@@ -57,7 +115,9 @@ const CardManagementTable = ({ cardData, filters, aircraft }) => {
                         <Dropdown
                             {...register("aircraft")}
                             value={selectedAircraft} onChange={(e) => setSelectedAircraft(e.value)} options={aircraft} optionLabel="aircraftName"
-                            placeholder={updateCard?.aircraft?.aircraftName || "Select Aircraft"} size="small" className="w-full p-dropdown-sm" />
+                            placeholder={updateCard?.aircraft?.aircraftName || "Select Aircraft"} size="small" className="w-full p-dropdown-sm"
+                            disabled
+                        />
                     </div>
                     <div className='w-full'>
                         <InputText
@@ -86,7 +146,7 @@ const CardManagementTable = ({ cardData, filters, aircraft }) => {
                     <i className="pi pi-trash rounded-full mx-auto text-red-500 p-2 shadow-lg shadow-red-300" style={{ fontSize: '3rem' }}></i>
                     <p className='text-lg text-gray-700'>Are you sure you want to delete?</p>
                     <div className='flex justify-end gap-2 mt-4'>
-                        <Button label="Delete" severity='danger' size='small' onClick={() => handleDeleteCard()} />
+                        <Button label="Delete" severity='danger' size='small' onClick={() => handleDeleteCard()} loading={loading} />
                         {/* <Button label="No" icon="pi pi-times" severity='secondary' size='small' onClick={() => setDeleteStock(false)} /> */}
                     </div>
                 </div>

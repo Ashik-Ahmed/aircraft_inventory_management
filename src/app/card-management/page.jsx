@@ -154,7 +154,7 @@ const CardManagement = () => {
                         </div>
                     </div>
                 </div>
-                <CardManagementTable cardData={cardData} filters={filters} aircraft={aircraft} />
+                <CardManagementTable cardData={cardData} filters={filters} aircraft={aircraft} getAllCardInfo={getAllCardInfo} />
             </div>
 
             {/* Create Card dialog  */}
