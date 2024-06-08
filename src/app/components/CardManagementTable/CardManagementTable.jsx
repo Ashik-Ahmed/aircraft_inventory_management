@@ -44,7 +44,7 @@ const CardManagementTable = ({ cardData, filters, aircraft, getAllCardInfo }) =>
                 console.log('card update:', data);
                 if (data.status === 'Success') {
                     getAllCardInfo();
-                    toast.current.show({ severity: 'success', summary: 'Card Updated', detail: 'Card updated successfully', life: 3000 });
+                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Card updated successfully', life: 3000 });
                 }
                 else {
                     toast.current.show({ severity: 'error', summary: 'Error', detail: data?.error, life: 3000 });
