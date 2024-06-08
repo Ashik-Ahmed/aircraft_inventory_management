@@ -16,8 +16,11 @@ import Link from 'next/link';
 import { FilterMatchMode } from 'primereact/api';
 import { Toast } from 'primereact/toast';
 import { formatDate } from '../../../../utils/dateFunctionality';
+import Cookies from 'universal-cookie';
 
 const StockTable = ({ aircraft, id, getAircraftData }) => {
+
+    const cookie = new Cookies();
 
     const toast = useRef(null);
 
@@ -88,6 +91,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             },
             body: JSON.stringify(updatedStockData),
         })
@@ -111,7 +115,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
 
     const handleDeleteStock = async (data) => {
         console.log("Delete Stock", data?._id);
-        const deleteStock = await deleteStockById(data?._id);
+        const deleteStock = await deleteStockById(data?._id, cookie.get('TOKEN'));
         if (deleteStock.status == 'Success') {
             getAircraftData(id);
             setDeleteStock(false);

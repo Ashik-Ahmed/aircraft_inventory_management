@@ -112,7 +112,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
 
 
 
-exports.exportStockHistory = async (stockHistoryData) => {
+exports.exportStockHistory = async (stock, availableQuantity, stockHistoryData) => {
     const exportColumns = [
         { title: 'Ser. No.', dataKey: 'serial' },
         ...stockHistoryData?.selectedColumns?.map(col => ({ title: col.header, dataKey: col.field }))]
@@ -158,6 +158,13 @@ exports.exportStockHistory = async (stockHistoryData) => {
                         const textWidth = doc.getTextWidth(text);
                         const x = (doc.internal.pageSize.width - textWidth) / 2;
                         doc.text(text, x, y);
+
+                        // Add an underline by drawing a line directly beneath the text
+                        const fontSize = doc.internal.getFontSize();
+                        const textHeight = fontSize * 0.352777778; // Convert points to mm
+                        doc.setDrawColor(0, 0, 0); // Set the line color to black
+                        doc.setLineWidth(0.5); // Set the line width
+                        doc.line(x, y + 1.5, x + textWidth, y + 1.5); // Draw the line
                     };
 
                     // Header
@@ -168,10 +175,30 @@ exports.exportStockHistory = async (stockHistoryData) => {
                     centerText(`${stockHistoryData?.reportName}`, 38);
                     centerText(`${stockHistoryData?.optional1}`, 53);
                     centerText(`${stockHistoryData?.optional2}`, 67);
+
+
+                    doc.setFontSize(15);
+
+                    doc.text('Stock Details:', 50, 90)
+                    // Add an underline by drawing a line directly beneath the text
+                    const fontSize = doc.internal.getFontSize();
+                    doc.setDrawColor(0, 0, 0); // Set the line color to black
+                    doc.setLineWidth(0.5); // Set the line width
+                    doc.line(50, 90 + 1.5, 50 + doc.getTextWidth('Stock Details'), 90 + 1.5); // Draw the line
+
+                    doc.setFontSize(12);
+                    doc.text(`Nomenclature: ${stock?.nomenclature || '--'}`, 50, 110)
+                    doc.text(`Aircraft: ${stock?.aircraftId?.aircraftName || '--'}`, 50, 123)
+                    doc.text(`Available Qty.: ${availableQuantity || '--'} ${(availableQuantity < stock?.minimumQuantity) && '(Low Stock)'}`, 50, 136)
+                    doc.text(`Card No.: ${stock?.cardNo || '--'}`, 50, 149)
+                    doc.text(`Part No.: ${stock?.partNo || '--'}`, 50, 162)
+                    doc.text(`Unit: ${stock?.unit || '--'}`, 50, 175)
+                    doc.text(`Issued At: ${stock?.issuedAt ? formatDate(stock?.issuedAt) : '--'}`, 50, 188)
+                    doc.text(`Location: ${stock?.location || '--'}`, 50, 201)
                 }
 
                 doc.autoTable(exportColumns, stockHistoryData?.stockHistory, {
-                    startY: 85,
+                    startY: 220,
                     styles: {
                         // font: 'Roboto',
                         font: 'DejaVuSans',
@@ -219,6 +246,7 @@ exports.exportStockHistory = async (stockHistoryData) => {
                         var pageHeight = pageSize.height
                             ? pageSize.height
                             : pageSize.getHeight();
+                        doc.text(str, data.settings.margin.left, pageHeight - 10);
 
                     }
                 });

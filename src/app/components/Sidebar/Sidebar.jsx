@@ -90,7 +90,7 @@ const Sidebar = () => {
 
             </ul >
             <div className='text-white font-semibold flex items-center gap-x-2 mt-32 ml-4'>
-                <Image src={user?.photo || userPhoto} alt='user' width={30} height={30} className='rounded-full border' />
+                <Image src={user?.imageUrl || userPhoto} alt='user' width={30} height={30} className='rounded-full border' />
                 <div>
                     <p>{user?.name}</p>
                     <p className='text-gray-300 text-xs italic'>{user?.email}</p>

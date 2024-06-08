@@ -13,9 +13,11 @@ import React, { useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate, getDateDifference } from '../../../../utils/dateFunctionality';
 import StockHistoryExportDialog from '../ReportExportDialog/StockHistoryExportDialog';
+import Cookies from 'universal-cookie';
 
-const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selectedAircraftUnitOptionTemplate, aircraftUnitOptionTemplate, allAircraftUnit }) => {
+const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selectedAircraftUnitOptionTemplate, aircraftUnitOptionTemplate, allAircraftUnit, availableQuantity }) => {
     // console.log(stock);
+    const cookie = new Cookies();
     const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
@@ -100,7 +102,8 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
         fetch(`http://localhost:5000/api/v1/stockHistory/${id}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             }
         })
             .then((response) => response.json())
@@ -142,6 +145,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             },
             body: JSON.stringify(updatedStockHistory),
         })
@@ -196,7 +200,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
             </div>
 
             {
-                exportDialog && <StockHistoryExportDialog exportDialog={exportDialog} setExportDialog={setExportDialog} stockHistory={stockHistoryData} />
+                exportDialog && <StockHistoryExportDialog exportDialog={exportDialog} setExportDialog={setExportDialog} stock={stock} stockHistory={stockHistoryData} availableQuantity={availableQuantity} />
             }
 
             {/* Edit Stock History  */}

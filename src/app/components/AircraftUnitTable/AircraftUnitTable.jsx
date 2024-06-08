@@ -9,9 +9,11 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Cookies from 'universal-cookie';
 
 const AircraftUnitTable = ({ allAirraft, allAircraftUnit, filters, getAllAircraftUnit }) => {
 
+    const cookie = new Cookies();
     const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
@@ -42,11 +44,11 @@ const AircraftUnitTable = ({ allAirraft, allAircraftUnit, filters, getAllAircraf
         }, {});
 
         console.log(updatedAircraftData);
-
         fetch(`http://localhost:5000/api/v1/aircraftUnit/${updateAircraftUnit?._id}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             },
             body: JSON.stringify(updatedAircraftData)
         })
@@ -73,7 +75,8 @@ const AircraftUnitTable = ({ allAirraft, allAircraftUnit, filters, getAllAircraf
         fetch(`http://localhost:5000/api/v1/aircraftUnit/${deleteAircraftUnit?._id}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             }
         })
             .then((response) => response.json())

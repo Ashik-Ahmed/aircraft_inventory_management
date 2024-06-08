@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { exportStockHistory, exportStockReport } from '../../../../utils/ExportPDF';
 import { Checkbox } from 'primereact/checkbox';
 
-const StockHistoryExportDialog = ({ exportDialog, setExportDialog, stockHistory }) => {
+const StockHistoryExportDialog = ({ exportDialog, setExportDialog, stock, stockHistory, availableQuantity }) => {
 
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
@@ -47,7 +47,7 @@ const StockHistoryExportDialog = ({ exportDialog, setExportDialog, stockHistory 
         }
         // console.log(stockDetailsReportData);
         // console.log(selectedColumns);
-        exportStockHistory(stockHistoryData);
+        exportStockHistory(stock, availableQuantity, stockHistoryData);
 
         setExportDialog(false);
         reset();

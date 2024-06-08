@@ -1,6 +1,7 @@
 "use client"
 
 import { Column } from 'jspdf-autotable';
+import Image from 'next/image';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
@@ -9,9 +10,12 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Cookies from 'universal-cookie';
+import userPhoto from '../../../assets/images/user.png';
 
 const UserTable = ({ users, filters, getAllUser }) => {
 
+    const cookie = new Cookies();
     const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
@@ -31,7 +35,8 @@ const UserTable = ({ users, filters, getAllUser }) => {
         fetch(`http://localhost:5000/api/v1/user/${rowData._id}`, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             }
         })
             .then(res => res.json())
@@ -101,7 +106,8 @@ const UserTable = ({ users, filters, getAllUser }) => {
         fetch(`http://localhost:5000/api/v1/user/${updateUser._id}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
             },
             body: JSON.stringify(updatedUserData)
         })
@@ -122,6 +128,14 @@ const UserTable = ({ users, filters, getAllUser }) => {
         setRole(null);
     }
 
+    const userNameBodyTemplate = (rowData) => {
+        return (
+            <div className='flex items-center gap-x-2'>
+                <Image src={rowData?.imageUrl || userPhoto} alt={rowData?.name} priority width='40' height='40' className='rounded-full' />
+                <p>{rowData?.name}</p>
+            </div>
+        )
+    }
 
     const actionBodyTemplate = (rowData) => {
         return (
@@ -138,8 +152,8 @@ const UserTable = ({ users, filters, getAllUser }) => {
             <Toast ref={toast} />
             <div>
                 <DataTable value={users} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['name', 'email', 'role']} emptyMessage="No user found">
-                    <Column field="serial" header="Ser. No." sortable></Column>
-                    <Column field="name" header="Name" sortable></Column>
+                    <Column field="serial" header="Ser. No."></Column>
+                    <Column body={userNameBodyTemplate} header="Name" sortable sortField="name"></Column>
                     <Column field="email" header="Email" sortable></Column>
                     <Column field="role" header="User Role" sortable></Column>
                     <Column body={actionBodyTemplate} header="Actions"></Column>

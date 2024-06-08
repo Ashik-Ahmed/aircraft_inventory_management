@@ -188,7 +188,7 @@ const Stock = ({ params: { stockId } }) => {
                 <div>
                     <h3 className='text-lg uppercase text-gray-700'>Stock Details</h3>
                     <div className='mt-4 flex flex-col gap-2'>
-                        <p>Stock: {stock?.nomenclature || '--'}</p>
+                        <p>Nomenclature: {stock?.nomenclature || '--'}</p>
                         <p>Aircraft Name: {stock?.aircraftId?.aircraftName || '--'}</p>
                         <p>Available Qty: {availableQuantity || '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white bg-red-500 rounded-md p-1'>Low Stock</span>}</p>
                         <p>Card No.: {stock?.cardNo || '--'}</p>
@@ -203,11 +203,11 @@ const Stock = ({ params: { stockId } }) => {
                 </div>
             </div>
 
-            <StockHistoryTable stock={stock} setAddStockHistory={setAddStockHistory} getStockDetails={getStockDetails} selectedAircraftUnitOptionTemplate={selectedAircraftUnitOptionTemplate} aircraftUnitOptionTemplate={aircraftUnitOptionTemplate} allAircraftUnit={allAircraftUnit} />
+            <StockHistoryTable stock={stock} setAddStockHistory={setAddStockHistory} getStockDetails={getStockDetails} selectedAircraftUnitOptionTemplate={selectedAircraftUnitOptionTemplate} aircraftUnitOptionTemplate={aircraftUnitOptionTemplate} allAircraftUnit={allAircraftUnit} availableQuantity={availableQuantity} />
 
 
             {/* Add Stock History  */}
-            <Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); setSelectedAircraftUnit(null); setItemType(null); setActionStatus(null); reset() }}
+            < Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); setSelectedAircraftUnit(null); setItemType(null); setActionStatus(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddStockHistory)} className="flex flex-col gap-2 mt-4">
 

@@ -99,44 +99,89 @@ const ManageUsers = () => {
         const userPhoto = new FormData();
         userPhoto.append('image', image);
 
-        await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+        const uploadResponse = await fetch('http://localhost:5000/api/v1/upload', {
             method: 'POST',
             body: userPhoto
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data?.data?.url) {
-                    userData.photo = data.data.url
-                    fetch('http://localhost:5000/api/v1/user', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(userData)
-                    }).then(res => res.json())
-                        .then(data => {
-                            console.log(data)
-                            if (data.status == 'Success') {
-                                toast.current.show({ severity: 'success', summary: 'Success', detail: 'User Added Successfully', life: 3000 });
-                                getAllUser()
-                            }
-                            else {
-                                toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
-                            }
-                        })
+        });
 
-                    setAddUser(false);
-                    setImage(null);
-                    setRole(null);
-                    reset();
-                }
+        const uploadData = await uploadResponse.json();
 
-                else {
-                    toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
-                }
+        if (uploadData.status === 'Success') {
 
-            })
+            userData.photo = uploadData.filePath
+
+            fetch('http://localhost:5000/api/v1/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${cookie.get('TOKEN')}`
+                },
+                body: JSON.stringify(userData)
+            }).then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                    if (data.status == 'Success') {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'User Added Successfully', life: 3000 });
+                        getAllUser()
+                    }
+                    else {
+                        toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+                    }
+                })
+        }
+        else {
+            toast.current.show({ severity: 'error', summary: 'Failed!', detail: "Image Upload Failed", life: 3000 });
+        }
+
+
         setLoading(false);
+        setAddUser(false);
+        reset();
+
+
+
+        // await fetch('https://api.imgbb.com/1/upload?key=a0bd0c6e9b17f5f8fa7f35d20163bdf3', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': `Bearer ${cookie.get('TOKEN')}`
+        //     },
+        //     body: userPhoto
+        // })
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         if (data?.data?.url) {
+        //             userData.photo = data.data.url
+        //             fetch('http://localhost:5000/api/v1/user', {
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'Content-Type': 'application/json',
+        //                     'Authorization': `Bearer ${cookie.get('TOKEN')}`
+        //                 },
+        //                 body: JSON.stringify(userData)
+        //             }).then(res => res.json())
+        //                 .then(data => {
+        //                     console.log(data)
+        //                     if (data.status == 'Success') {
+        //                         toast.current.show({ severity: 'success', summary: 'Success', detail: 'User Added Successfully', life: 3000 });
+        //                         getAllUser()
+        //                     }
+        //                     else {
+        //                         toast.current.show({ severity: 'error', summary: 'Failed!', detail: data?.error, life: 3000 });
+        //                     }
+        //                 })
+
+        //             setAddUser(false);
+        //             setImage(null);
+        //             setRole(null);
+        //             reset();
+        //         }
+
+        //         else {
+        //             toast.current.show({ severity: 'error', summary: 'Failed!', detail: 'Image Upload Failed', life: 3000 });
+        //         }
+
+        //     })
     }
 
 

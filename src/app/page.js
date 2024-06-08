@@ -77,7 +77,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          // 'Authorization': `Bearer ${cookie.get('TOKEN')}`
+          'Authorization': `Bearer ${cookie.get('TOKEN')}`
         },
         body: JSON.stringify(aircraftData)
       })
