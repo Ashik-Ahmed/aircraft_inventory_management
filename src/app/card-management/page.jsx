@@ -136,7 +136,7 @@ const CardManagement = () => {
     return (
         <div>
             <Toast ref={toast} />
-            <div className='p-1 bg-white rounded-md shadow-md'>
+            <div className='p-1 bg-white rounded-md shadow'>
                 <div className='flex items-center justify-between'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Manage Cards</h3>

@@ -160,7 +160,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
     return (
         <div>
             <Toast ref={toast} />
-            <div className='border shadow-md bg-white rounded-md mt-2 w-ful min-h-[90vh]'>
+            <div className='border shadow bg-white rounded-md mt-2 w-ful min-h-[90vh]'>
                 <div className="flex justify-between m-2 items-center">
                     <div>
                         <p className='text-lg text-gray-700 uppercase'>Available Stocks</p>
@@ -172,9 +172,9 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                 </div>
                 <DataTable value={stocksData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['cardNo', 'nomenclature', 'stockNo', 'uploadStatus', 'quantity']} emptyMessage="No available stocks">
                     <Column field="serial" header="Ser. No."></Column>
-                    <Column field="cardNo" header="Card No"></Column>
+                    <Column field="cardNo" header="Card No" sortable></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
-                    <Column field="stockNo" header="Stock/Parts No" sortable></Column>
+                    <Column field="stockNo" header="Stock/Parts No"></Column>
                     <Column body={quantityBodyTemplate} header="Quantity" sortable></Column>
                     <Column body={latestExpiryBodyTemplate} header="Latest Expire" sortField='latestExpiry' sortable></Column>
                     <Column body={statusBodyTemplate} header="Status"></Column>

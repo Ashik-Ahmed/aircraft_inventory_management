@@ -137,7 +137,7 @@ const Report = () => {
                     <Dropdown value={selectedAircraft} onChange={(e) => setSelectedAircraft(e.value)} options={allAircraft} optionLabel="aircraftName" placeholder="Select Aircraft" size="small" className="w-full p-dropdown-sm" />
                 </div>
             </div>
-            <div className='bg-white shadow-md p-2 rounded-md'>
+            <div className='bg-white shadow p-2 rounded-md'>
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Stock Report</h3>

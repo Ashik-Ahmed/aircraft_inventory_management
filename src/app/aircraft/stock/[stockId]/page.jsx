@@ -184,7 +184,7 @@ const Stock = ({ params: { stockId } }) => {
     return (
         <div>
             <Toast ref={toast} />
-            <div className='flex justify-between p-4 border shadow-md bg-white rounded-md'>
+            <div className='flex justify-between p-4 border shadow bg-white rounded-md'>
                 <div>
                     <h3 className='text-lg uppercase text-gray-700'>Stock Details</h3>
                     <div className='mt-4 flex flex-col gap-2'>

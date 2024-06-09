@@ -172,7 +172,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
     return (
         <div>
             <Toast ref={toast} />
-            <div className='bg-white mt-4 shadow-md p-2 rounded-md'>
+            <div className='bg-white mt-4 shadow p-2 rounded-md'>
                 <div className='flex justify-between items-center'>
                     <div className='m-2 flex items-center gap-x-2'>
                         <h3 className='text-lg uppercase text-gray-700'>Stock History</h3>
@@ -194,7 +194,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
                     <Column body={dateBodyTemplate} header="Issue Date" sortField='issueDate' sortable></Column>
                     <Column body={aircraftUnitBodyTemplate} header="Aircraft" ></Column>
                     <Column body={expiryDateBodyTemplate} header="Expiry Date" sortField='expiryDate' sortable></Column>
-                    {/* <Column body={expiryStatusBodyTemplate} header="Expiry Status"></Column> */}
+                    {/* <Column field="remarks" header="Remarks"></Column> */}
                     <Column body={actionBodyTemplate} header="Actions"></Column>
                 </DataTable>
             </div>

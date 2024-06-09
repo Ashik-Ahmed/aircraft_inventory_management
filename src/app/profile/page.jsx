@@ -92,18 +92,18 @@ const ProfilePage = () => {
                             <p className='font-semibold w-1/3'>Email</p>
                             <span className='w-2/3'>: {user?.email || '--'}</span>
                         </div>
-                        <div className='flex items-baseline justify-between mt-1'>
+                        {/* <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>user Id</p>
                             <span className='w-2/3'>: {user?.userId || '--'}</span>
-                        </div>
+                        </div> */}
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Role</p>
                             <span className='w-2/3'>: {user?.role || '--'}</span>
                         </div>
-                        <div className='flex items-baseline justify-between mt-1'>
+                        {/* <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Designation</p>
                             <span className='w-2/3'>: {user?.designation || '--'}</span>
-                        </div>
+                        </div> */}
                         <div className='flex items-baseline justify-between mt-1'>
                             <p className='font-semibold w-1/3'>Joining date</p>
                             <span className='w-2/3'>: {formatDate(user?.createdAt) || '--'}</span>

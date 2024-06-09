@@ -181,7 +181,7 @@ const Aircraft = ({ params: { id } }) => {
     return (
         <div>
             <Toast ref={toast} />
-            <div className='flex justify-between items-center border shadow-md p-2 bg-white rounded-md'>
+            <div className='flex justify-between items-center border shadow p-2 bg-white rounded-md'>
                 <p className='text-xl font-bold'>Aircraft: {aircraft?.aircraftName}</p>
                 <Button label="Add Stock" icon="pi pi-plus" size='small' onClick={() => setAddStock(true)} />
             </div>

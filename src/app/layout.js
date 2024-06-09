@@ -62,7 +62,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <PrimeReactProvider>
         <main className={roboto.className}>
-          <body className="flex">
+          <body className="flex bg-gray-100">
             {/* <CustomLayout children={children} /> */}
             <div>
               <Sidebar />

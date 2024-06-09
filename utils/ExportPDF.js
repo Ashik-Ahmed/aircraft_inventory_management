@@ -102,7 +102,7 @@ exports.exportStockReport = async (stockDetailsReport) => {
                 });
 
 
-                doc.save(`Stock-Report-${new Date()}.pdf`);
+                doc.save(`Stock-Report-${new Date().toISOString().slice(0, 10)}.pdf`);
             })
         })
 
@@ -187,11 +187,11 @@ exports.exportStockHistory = async (stock, availableQuantity, stockHistoryData) 
                     doc.line(50, 90 + 1.5, 50 + doc.getTextWidth('Stock Details'), 90 + 1.5); // Draw the line
 
                     doc.setFontSize(12);
+                    doc.text(`Card No.: ${stock?.cardNo || '--'}`, 50, 149)
+                    doc.text(`Part No.: ${stock?.stockNo || '--'}`, 50, 162)
                     doc.text(`Nomenclature: ${stock?.nomenclature || '--'}`, 50, 110)
                     doc.text(`Aircraft: ${stock?.aircraftId?.aircraftName || '--'}`, 50, 123)
                     doc.text(`Available Qty.: ${availableQuantity || '--'} ${(availableQuantity < stock?.minimumQuantity) && '(Low Stock)'}`, 50, 136)
-                    doc.text(`Card No.: ${stock?.cardNo || '--'}`, 50, 149)
-                    doc.text(`Part No.: ${stock?.partNo || '--'}`, 50, 162)
                     doc.text(`Unit: ${stock?.unit || '--'}`, 50, 175)
                     doc.text(`Issued At: ${stock?.issuedAt ? formatDate(stock?.issuedAt) : '--'}`, 50, 188)
                     doc.text(`Location: ${stock?.location || '--'}`, 50, 201)
@@ -250,7 +250,7 @@ exports.exportStockHistory = async (stock, availableQuantity, stockHistoryData) 
 
                     }
                 });
-                doc.save(`Stock-History-Report-${new Date()}.pdf`);
+                doc.save(`Stock-History-Report-${new Date().toISOString().slice(0, 10)}.pdf`);
             })
         })
 
