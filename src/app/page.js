@@ -140,18 +140,23 @@ export default function Home() {
   }
 
   if (!user) {
-    return <div className="relative h-[100vh] w-full">
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={bgImage}
-          alt="Background"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
-        />
-      </div>
-      <div className="relative z-10">
-        <Login />
+    return <div className="-m-4">
+      <div className="relative h-[100vh] w-full">
+        <div className="absolute inset-0 z-10 bg-black opacity-70"></div>
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={bgImage}
+            alt="Background"
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+            priority
+            className="w-full h-screen"
+          />
+        </div>
+        <div className="relative z-10">
+          <Login />
+        </div>
       </div>
     </div>
   }

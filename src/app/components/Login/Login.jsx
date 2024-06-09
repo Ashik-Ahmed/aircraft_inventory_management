@@ -57,8 +57,7 @@ const Login = () => {
     return (
         <div className='h-[93vh] flex items-center w-full'>
             <Toast ref={toast} />
-
-            <div className=" mx-auto my-auto rounded-md bg-white shadow">
+            <div className=" mx-auto my-auto rounded-md bg-white opacity-80 shadow">
                 <div className="surface-card p-4 shadow-2 border-round w-full lg:w-96">
                     <div className="text-center mb-5">
                         <Image src={logo} alt="logo" height={50} className="mb-3 mx-auto" />
