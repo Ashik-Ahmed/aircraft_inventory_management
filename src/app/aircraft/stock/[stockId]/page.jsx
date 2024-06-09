@@ -190,7 +190,7 @@ const Stock = ({ params: { stockId } }) => {
                     <div className='mt-4 flex flex-col gap-2'>
                         <p>Nomenclature: {stock?.nomenclature || '--'}</p>
                         <p>Aircraft Name: {stock?.aircraftId?.aircraftName || '--'}</p>
-                        <p>Available Qty: {availableQuantity || '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white bg-red-500 rounded-md p-1'>Low Stock</span>}</p>
+                        <p>Available Qty: {availableQuantity || '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white text-xs bg-red-500 p-[1px]'>Low Stock</span>}</p>
                         <p>Card No.: {stock?.cardNo || '--'}</p>
                         <p>Stock/Part No.: {stock?.stockNo || '--'}</p>
                         <p>Unit: {stock?.unit || '--'}</p>
@@ -207,7 +207,7 @@ const Stock = ({ params: { stockId } }) => {
 
 
             {/* Add Stock History  */}
-            < Dialog header="Add to Stock" visible={addStockHistory} onHide={() => { setAddStockHistory(false); setSelectedAircraftUnit(null); setItemType(null); setActionStatus(null); reset() }}
+            < Dialog header="Add to Stock History" visible={addStockHistory} onHide={() => { setAddStockHistory(false); setSelectedAircraftUnit(null); setItemType(null); setActionStatus(null); reset() }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleAddStockHistory)} className="flex flex-col gap-2 mt-4">
 
@@ -263,22 +263,25 @@ const Stock = ({ params: { stockId } }) => {
                         />
                         {errors.issueDate?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.issueDate.message}</span>}
                     </div>
-                    <div>
-                        <Controller
-                            name="expiryDate"
-                            control={control}
-                            render={({ field }) => (
-                                <Calendar
-                                    // value={date}
-                                    // {...register("expiryDate", { required: "Expiry Date is required" })}
-                                    dateFormat='dd-mm-yy'
-                                    onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
-                                    placeholder={'Expiry Date'}
-                                    className='w-full p-inputtext-sm'
-                                />
-                            )}
-                        />
-                    </div>
+                    {
+                        actionStatus === 'Received' &&
+                        <div>
+                            <Controller
+                                name="expiryDate"
+                                control={control}
+                                render={({ field }) => (
+                                    <Calendar
+                                        // value={date}
+                                        // {...register("expiryDate", { required: "Expiry Date is required" })}
+                                        dateFormat='dd-mm-yy'
+                                        onChange={(e) => { setExpiryDate(e.value); field.onChange(e.value) }}
+                                        placeholder={'Expiry Date'}
+                                        className='w-full p-inputtext-sm'
+                                    />
+                                )}
+                            />
+                        </div>
+                    }
                     <div className='w-full'>
                         <InputText
                             {...register("quantity", { required: "Quantity is required" })}

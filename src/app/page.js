@@ -12,6 +12,8 @@ import Cookies from "universal-cookie";
 import Login from "./components/Login/Login";
 import { getLoggedInUser } from "../../lib/User";
 import { useRouter } from "next/navigation";
+import bgImage from '../assets/images/bg-image.jpg'
+import Image from "next/image";
 
 
 export default function Home() {
@@ -138,7 +140,20 @@ export default function Home() {
   }
 
   if (!user) {
-    return <div><Login /></div>
+    return <div className="relative h-[100vh] w-full">
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={bgImage}
+          alt="Background"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+        />
+      </div>
+      <div className="relative z-10">
+        <Login />
+      </div>
+    </div>
   }
 
 

@@ -175,7 +175,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                     <Column field="cardNo" header="Card No" sortable></Column>
                     <Column body={nomenclatureBodyTemplate} header="Nomenclature" sortable sortField='nomenclature'></Column>
                     <Column field="stockNo" header="Stock/Parts No"></Column>
-                    <Column body={quantityBodyTemplate} header="Quantity" sortable></Column>
+                    <Column body={quantityBodyTemplate} header="Quantity" sortable sortField='quantity'></Column>
                     <Column body={latestExpiryBodyTemplate} header="Latest Expire" sortField='latestExpiry' sortable></Column>
                     <Column body={statusBodyTemplate} header="Status"></Column>
                     {/* <Column field="uploadStatus" header="Upload Status"></Column> */}

@@ -8,6 +8,7 @@ import React, { useRef, useState } from 'react';
 import Cookies from 'universal-cookie';
 import logo from '../../../assets/images/logo.jpg';
 import Image from 'next/image';
+import bgImage from '../../../assets/images/bg-image.jpg';
 
 const Login = () => {
 
@@ -54,7 +55,6 @@ const Login = () => {
     }
 
     return (
-
         <div className='h-[93vh] flex items-center w-full'>
             <Toast ref={toast} />
 
@@ -62,9 +62,9 @@ const Login = () => {
                 <div className="surface-card p-4 shadow-2 border-round w-full lg:w-96">
                     <div className="text-center mb-5">
                         <Image src={logo} alt="logo" height={50} className="mb-3 mx-auto" />
-                        <h2 className="text-3xl font-medium mb-3">Army Avn. Maint WKSP</h2>
+                        <h2 className="text-3xl font-medium mb-3">Army Avn. Maint. Wksp.</h2>
                         {/* <p className='text-2xl font-semibold'>Army Avn. Maint WKSP</p> */}
-                        <span className="mt-4 font-medium">Please Sign-in</span>
+                        <span className="mt-4 font-medium text-sky-600">Please Sign-in</span>
                     </div>
 
                     <form onSubmit={handleLogin}>
@@ -75,9 +75,9 @@ const Login = () => {
                         </div>
 
                         <label htmlFor="password" className="block text-900 font-medium mb-2">Password</label>
-                        <div className="p-inputgroup flex-1">
+                        <div className="p-inputgroup flex-1 ">
                             <InputText id="password" type={passwordVisibility ? 'text' : 'password'} placeholder="Password" className="w-full" />
-                            <span onClick={() => setPasswordVisibility(!passwordVisibility)} size='small' className="p-inputgroup-addon">  {passwordVisibility ? <i className="pi pi-eye-slash"></i> : <i className="pi pi-eye"></i>}</span>
+                            <span onClick={() => setPasswordVisibility(!passwordVisibility)} size='small' className="p-inputgroup-addon cursor-pointer">  {passwordVisibility ? <i className="pi pi-eye-slash"></i> : <i className="pi pi-eye"></i>}</span>
                         </div>
                         {
                             passError && <p className='text-red-500 text-xs italic'>{passError}</p>
