@@ -67,7 +67,7 @@ export default function RootLayout({ children }) {
             <div>
               <Sidebar />
             </div>
-            <div className="p-4 bg-gray-100 w-full overflow-y-auto">
+            <div className="p-4 w-full overflow-y-auto">
               {children}
             </div>
           </body>

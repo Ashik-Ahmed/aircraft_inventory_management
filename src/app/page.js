@@ -138,7 +138,7 @@ export default function Home() {
   }
 
   if (!user) {
-    return <div className="w-fit mx-auto h-screen"><Login /></div>
+    return <div><Login /></div>
   }
 
 
