@@ -142,7 +142,7 @@ export default function Home() {
   if (!user) {
     return <div className="-m-4">
       <div className="relative h-[100vh] w-full">
-        <div className="absolute inset-0 z-10 bg-black opacity-70"></div>
+        <div className="absolute inset-0 z-10 bg-black opacity-20"></div>
         <div className="absolute inset-0 z-0">
           <Image
             src={bgImage}

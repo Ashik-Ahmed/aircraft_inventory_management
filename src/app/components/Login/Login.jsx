@@ -57,13 +57,13 @@ const Login = () => {
     return (
         <div className='h-[93vh] flex items-center w-full'>
             <Toast ref={toast} />
-            <div className=" mx-auto my-auto rounded-md bg-white opacity-80 shadow">
+            <div className=" mx-auto my-auto rounded-md bg-white opacity-90 shadow">
                 <div className="surface-card p-4 shadow-2 border-round w-full lg:w-96">
                     <div className="text-center mb-5">
                         <Image src={logo} alt="logo" height={50} className="mb-3 mx-auto" />
-                        <h2 className="text-3xl font-medium mb-3">Army Avn. Maint. Wksp.</h2>
+                        <h2 className="text-3xl font-medium mb-3">ARMY AVN MAINT WKSP</h2>
                         {/* <p className='text-2xl font-semibold'>Army Avn. Maint WKSP</p> */}
-                        <span className="mt-4 font-medium text-sky-600">Please Sign-in</span>
+                        <span className="mt-4 font-medium text-sky-600 underline">Please Sign-in</span>
                     </div>
 
                     <form onSubmit={handleLogin}>
