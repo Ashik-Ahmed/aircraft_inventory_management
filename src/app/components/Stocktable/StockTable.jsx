@@ -27,6 +27,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
     const [editStock, setEditStock] = useState(false);
+    const [image, setImage] = useState(null);
     const [deleteStock, setDeleteStock] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null)
@@ -70,8 +71,11 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         setGlobalFilterValue(value);
     };
 
+    const handlePhotoChange = (event) => {
+        setImage(event.target.files[0]);
+    };
 
-    const handleUpdateStock = (data) => {
+    const handleUpdateStock = async (data) => {
 
         if (selectedCard) {
             data.nomenclature = selectedCard?.nomenclature;
@@ -79,37 +83,87 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
         }
 
         const updatedStockData = Object.entries(data).reduce((acc, [key, value]) => {
-            if (value) {
+            // Check for FileList instance and if it is not empty
+            if (value instanceof FileList && value.length > 0) {
+                acc[key] = value;
+            }
+            // Check for other non-empty, non-negative, non-null, non-undefined values
+            else if (!(value instanceof FileList) && value !== undefined && value !== null && value !== '') {
                 acc[key] = value;
             }
             return acc;
         }, {});
 
+
+        if (!image && (Object.keys(updatedStockData).length === 0 || !updatedStockData)) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'No data to update', life: 3000 });
+            return
+        }
+
         console.log(updatedStockData);
 
-        fetch(`http://localhost:5000/api/v1/stock/${editStock?._id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${cookie.get('TOKEN')}`
-            },
-            body: JSON.stringify(updatedStockData),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.status == 'Success') {
-                    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock Updated Successfully', life: 3000 });
-                }
-                else {
-                    toast.current.show({ severity: 'error', summary: 'Error', detail: data.message, life: 3000 });
-                }
-                console.log(data);
-                getAircraftData(id);
-            })
+        if (image) {
+            const stockPhoto = new FormData();
+            stockPhoto.append('image', image);
 
+            // Upload the image first
+            const uploadResponse = await fetch('http://localhost:5000/api/v1/upload', {
+                method: 'POST',
+                body: stockPhoto
+            });
+            console.log(uploadResponse);
+            const uploadData = await uploadResponse.json();
+
+            if (uploadData?.status === 'Success') {
+                updatedStockData.image = uploadData.filePath;
+
+                fetch(`http://localhost:5000/api/v1/stock/${editStock?._id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${cookie.get('TOKEN')}`
+                    },
+                    body: JSON.stringify(updatedStockData),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.status == 'Success') {
+                            toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock Updated Successfully', life: 3000 });
+                        }
+                        else {
+                            toast.current.show({ severity: 'error', summary: 'Error', detail: data?.error, life: 3000 });
+                        }
+                        console.log(data);
+                        getAircraftData(id);
+                    })
+            }
+        }
+
+        else {
+            fetch(`http://localhost:5000/api/v1/stock/${editStock?._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${cookie.get('TOKEN')}`
+                },
+                body: JSON.stringify(updatedStockData),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status == 'Success') {
+                        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock Updated Successfully', life: 3000 });
+                    }
+                    else {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: data?.error, life: 3000 });
+                    }
+                    console.log(data);
+                    getAircraftData(id);
+                })
+        }
         setEditStock(false);
         setSelectedUnit(null);
         setSelectedCard(null);
+        setImage(null);
         reset();
     }
 
@@ -184,7 +238,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
             </div>
 
             {/* Edit Stock Dialog  */}
-            <Dialog header="Update Stock" visible={editStock} onHide={() => { setEditStock(false); setSelectedUnit(null); setSelectedCard(null); reset(); }}
+            <Dialog header="Update Stock" visible={editStock} onHide={() => { setEditStock(false); setSelectedUnit(null); setSelectedCard(null); setImage(null); reset(); }}
                 style={{ width: '35vw' }} breakpoints={{ '960px': '75vw', '641px': '100vw' }}>
                 <form onSubmit={handleSubmit(handleUpdateStock)} className="flex flex-col gap-2 mt-4">
 
@@ -244,12 +298,11 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
                             />
                         )}
                     />
-                    {/* <div className='mt-2'>
+                    <div className='mt-2'>
                         <input
-                            {...register("aircraftPhoto", { required: "Photo is required" })}
+                            {...register("image")}
                             onChange={handlePhotoChange} name='file' type="file" className='w-full border border-violet-600' />
-                        {errors.aircraftPhoto?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.aircraftPhoto.message}</span>}
-                    </div> */}
+                    </div>
 
                     <div>
                         <Button type="submit" label="Submit" size='small'></Button>
