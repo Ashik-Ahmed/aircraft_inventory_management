@@ -19,7 +19,7 @@ import { formatDate } from '../../../../utils/dateFunctionality';
 import Cookies from 'universal-cookie';
 
 const StockTable = ({ aircraft, id, getAircraftData }) => {
-
+    console.log(aircraft);
     const cookie = new Cookies();
 
     const toast = useRef(null);
@@ -198,7 +198,7 @@ const StockTable = ({ aircraft, id, getAircraftData }) => {
 
     const statusBodyTemplate = (rowData) => {
         return (
-            <p>{rowData?.quantity > 10 ? <span className='text-white p-1 rounded bg-green-400'>Sufficient</span> : <span className='text-white p-1 rounded bg-red-400'>Low</span>}</p>
+            <p>{rowData?.quantity >= rowData?.minimumQuantity ? <span className='text-white p-1 rounded bg-green-400'>Sufficient</span> : <span className='text-white p-1 rounded bg-red-400'>Low</span>}</p>
         );
     }
 
