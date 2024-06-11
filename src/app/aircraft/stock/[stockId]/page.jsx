@@ -2,25 +2,18 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { getStockDetailsById } from '../../../../../lib/Aircraft';
-import Image from 'next/image';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { FilterMatchMode } from 'primereact/api';
 import { Controller, useForm } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
-import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-import StockHistoryTable from '@/app/components/StockHistoryTable/StockHistoryTable';
-import { formatDate } from '../../../../../utils/dateFunctionality';
 import Cookies from 'universal-cookie';
 import { useRouter } from 'next/navigation';
 import { getLoggedInUser } from '../../../../../lib/User';
+import StockHistoryTable from '@/app/components/StockDetails/StockHistoryTable';
+import StockDetails from '@/app/components/StockDetails/StockDetails';
 
 const Stock = ({ params: { stockId } }) => {
 
@@ -68,12 +61,13 @@ const Stock = ({ params: { stockId } }) => {
         return 0;
     };
 
+
     // Assuming `result` is the object containing the fetched data:
     const availableQuantity = calculateAvailableQuantity(stock?.stockHistory);
 
 
-    const getStockDetails = async (id) => {
-        const data = await getStockDetailsById(id);
+    const getStockDetails = async () => {
+        const data = await getStockDetailsById(stockId);
         console.log(data);
         setStock(data?.data);
     }
@@ -107,7 +101,7 @@ const Stock = ({ params: { stockId } }) => {
                     .then(data => {
                         console.log(data);
                         if (data.status == 'Success') {
-                            getStockDetails(stockId);
+                            getStockDetails();
                             toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
                         }
                         else {
@@ -128,7 +122,7 @@ const Stock = ({ params: { stockId } }) => {
                 .then(data => {
                     console.log(data);
                     if (data.status == 'Success') {
-                        getStockDetails(stockId);
+                        getStockDetails();
                         toast.current.show({ severity: 'success', summary: 'Success', detail: 'Stock History Added', life: 3000 });
                     }
                     else {
@@ -153,7 +147,7 @@ const Stock = ({ params: { stockId } }) => {
 
 
     useEffect(() => {
-        getStockDetails(stockId);
+        getStockDetails();
         getAllAircraftUnit();
         getUser()
     }, [stockId])
@@ -184,25 +178,8 @@ const Stock = ({ params: { stockId } }) => {
     return (
         <div>
             <Toast ref={toast} />
-            <div className='flex justify-between p-4 border shadow bg-white rounded-md'>
-                <div>
-                    <h3 className='text-lg uppercase text-gray-700'>Stock Details</h3>
-                    <div className='mt-4 flex flex-col gap-2'>
-                        <p>Nomenclature: {stock?.nomenclature || '--'}</p>
-                        <p>Aircraft Name: {stock?.aircraftId?.aircraftName || '--'}</p>
-                        <p>Available Qty: {availableQuantity || '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white text-xs bg-red-500 p-[1px]'>Low Stock</span>}</p>
-                        <p>Card No.: {stock?.cardNo || '--'}</p>
-                        <p>Stock/Part No.: {stock?.stockNo || '--'}</p>
-                        <p>Unit: {stock?.unit || '--'}</p>
-                        <p>Issued At: {stock?.issuedAt ? formatDate(stock?.issuedAt) : '--'}</p>
-                        <p>Location: {stock?.location || '--'}</p>
-                    </div>
-                </div>
-                <div className='rounded-md'>
-                    <Image src={stock?.imageUrl} alt={stock?.imageAlt || 'Stock Image'} width={300} height={300} className='rounded-md border' />
-                </div>
-            </div>
 
+            <StockDetails stock={stock} />
             <StockHistoryTable stock={stock} setAddStockHistory={setAddStockHistory} getStockDetails={getStockDetails} selectedAircraftUnitOptionTemplate={selectedAircraftUnitOptionTemplate} aircraftUnitOptionTemplate={aircraftUnitOptionTemplate} allAircraftUnit={allAircraftUnit} availableQuantity={availableQuantity} />
 
 

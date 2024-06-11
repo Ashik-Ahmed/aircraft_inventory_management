@@ -9,19 +9,20 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { formatDate, getDateDifference } from '../../../../utils/dateFunctionality';
 import StockHistoryExportDialog from '../ReportExportDialog/StockHistoryExportDialog';
 import Cookies from 'universal-cookie';
 
 const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selectedAircraftUnitOptionTemplate, aircraftUnitOptionTemplate, allAircraftUnit, availableQuantity }) => {
-    // console.log(stock);
+    console.log(stock?._id);
     const cookie = new Cookies();
     const toast = useRef(null);
 
     const { register, control, formState: { errors }, handleSubmit, reset } = useForm();
 
+    const [stockHistory, setStockHistory] = useState(null);
     const [loading, setLoading] = useState(false);
     const [deleteStockHistory, setDeleteStockHistory] = useState(false);
     const [updateStockHistory, setUpdateStockHistory] = useState(false);
@@ -31,6 +32,8 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
     const [issueDate, setIssueDate] = useState(null);
     const [expiryDate, setExpiryDate] = useState(null);
     const [exportDialog, setExportDialog] = useState(false);
+    const [issueStartDate, setIssueStartDate] = useState(null);
+    const [issueEndDate, setIssueEndDate] = useState(null);
 
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -51,49 +54,34 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
         setFilters(_filters);
         setGlobalFilterValue(value);
     };
-
-    const stockHistoryData = stock?.stockHistory?.map((item, index) => {
-        return {
-            serial: index + 1, // Add serial number property starting from 1
-            ...item
-        };
-    });
-
-    const dateBodyTemplate = (rowData) => {
-        return (
-            // <span className="p-column-title">{formatDate(rowData.createdAt)}</span>
-            <p>{rowData?.issueDate ? formatDate(rowData?.issueDate?.toLocaleString("en-US", { timeZone: "Asia/Dhaka" })) : '--'}</p>
-        );
-    }
-    const aircraftUnitBodyTemplate = (rowData) => {
-        return (
-            <div>
-                <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "--"}</p>
-                <p className='text-xs'>{rowData?.aircraftUnit?.regNo ? `Reg.: ${rowData?.aircraftUnit?.regNo}` : null}</p>
-            </div>
-        );
-    }
-    // const expiryDateBodyTemplate = (rowData) => {
-    //     return (
-    //         rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : '--'
-    //     );
-    // }
-
-    const expiryDateBodyTemplate = (rowData) => {
-        return (
-            (rowData?.actionStatus == "Received" && rowData?.expiryDate) ? <p>{getDateDifference(new Date(rowData?.expiryDate), new Date()) > 0 ? <span className='text-white p-1 rounded bg-green-400'>{formatDate(rowData?.expiryDate)}</span> : <span className='text-white p-1 rounded bg-red-400'>{formatDate(rowData?.expiryDate)}</span>}</p>
-                :
-                <p>--</p>
-        );
+    let stockHistoryData = []
+    if (stockHistory) {
+        stockHistoryData = stockHistory?.map((item, index) => {
+            return {
+                serial: index + 1, // Add serial number property starting from 1
+                ...item
+            };
+        });
     }
 
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <div className='flex gap-x-2'>
-                <Button onClick={() => setUpdateStockHistory(rowData)} label='Edit' icon="pi pi-pencil" size='small' severity='success' />
-                <Button onClick={() => setDeleteStockHistory(rowData)} label='Delete' icon="pi pi-trash" size='small' severity='danger' />
-            </div>
-        )
+
+    const getStockHistory = (stockId) => {
+        console.log(stockId);
+        const url = `http://localhost:5000/api/v1/stockHistory/detailsHistory/${stockId}?issueStartDateString=${issueStartDate}&issueEndDateString=${issueEndDate}`;
+        console.log(url);
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookie.get('TOKEN')}`
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data.data);
+                console.log(data?.data?.stockHistory);
+                setStockHistory(data?.data?.stockHistory);
+            })
     }
 
 
@@ -168,6 +156,55 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
         reset();
     }
 
+    const filterStockHistory = () => {
+        getStockDetails(issueStartDate, issueEndDate)
+        console.log(issueStartDate, issueEndDate);
+    }
+
+
+    useEffect(() => {
+        if (stock) {
+            getStockHistory(stock?._id);
+        }
+    }, [stock]);
+
+
+    const dateBodyTemplate = (rowData) => {
+        return (
+            // <span className="p-column-title">{formatDate(rowData.createdAt)}</span>
+            <p>{rowData?.issueDate ? formatDate(rowData?.issueDate?.toLocaleString("en-US", { timeZone: "Asia/Dhaka" })) : '--'}</p>
+        );
+    }
+    const aircraftUnitBodyTemplate = (rowData) => {
+        return (
+            <div>
+                <p>{rowData?.aircraftUnit?.aircraft?.aircraftName ? rowData?.aircraftUnit?.aircraft?.aircraftName : "--"}</p>
+                <p className='text-xs'>{rowData?.aircraftUnit?.regNo ? `Reg.: ${rowData?.aircraftUnit?.regNo}` : null}</p>
+            </div>
+        );
+    }
+    // const expiryDateBodyTemplate = (rowData) => {
+    //     return (
+    //         rowData?.expiryDate ? <p>{formatDate(rowData?.expiryDate)}</p> : '--'
+    //     );
+    // }
+
+    const expiryDateBodyTemplate = (rowData) => {
+        return (
+            (rowData?.actionStatus == "Received" && rowData?.expiryDate) ? <p>{getDateDifference(new Date(rowData?.expiryDate), new Date()) > 0 ? <span className='text-white p-1 rounded bg-green-400'>{formatDate(rowData?.expiryDate)}</span> : <span className='text-white p-1 rounded bg-red-400'>{formatDate(rowData?.expiryDate)}</span>}</p>
+                :
+                <p>--</p>
+        );
+    }
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <div className='flex gap-x-2'>
+                <Button onClick={() => setUpdateStockHistory(rowData)} label='Edit' icon="pi pi-pencil" size='small' severity='success' />
+                <Button onClick={() => setDeleteStockHistory(rowData)} label='Delete' icon="pi pi-trash" size='small' severity='danger' />
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -179,11 +216,53 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
                         <Button onClick={() => setAddStockHistory(true)} label='Add' icon="pi pi-plus" size='small' aria-label='Add' />
                         <Button onClick={() => setExportDialog(true)} icon="pi pi-file-pdf" severity='danger' size='small' text aria-label='Export' />
                     </div>
+                    <div className='flex gap-x-2 items-center'>
+                        <div className='flex gap-x-2 mr-8'>
+                            <div className='flex gap-x-2'>
+                                <Controller
+                                    name="issueStartDate"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Calendar
+                                            // value={date}
+                                            dateFormat='dd-mm-yy'
+                                            onChange={(e) => { setIssueStartDate(e.value); field.onChange(e.value) }}
+                                            placeholder='Issue Date From'
+                                            className='w-full p-inputtext-sm'
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    name="issueEndDate"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Calendar
+                                            // value={date}
+                                            dateFormat='dd-mm-yy'
+                                            onChange={(e) => { setIssueEndDate(e.value); field.onChange(e.value) }}
+                                            placeholder='Issue Date To'
+                                            className='w-full p-inputtext-sm'
+                                        />
+                                    )}
+                                />
+                            </div>
 
-                    <IconField iconPosition="left">
-                        <InputIcon className="pi pi-search" />
-                        <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
-                    </IconField>
+                            {/* <div>
+                                    <Dropdown
+                                        {...register('stockStatus')}
+                                        value={stockStatus} onChange={(e) => setStockStatus(e.value)} options={[{ label: 'All', value: 'all' }, { label: 'Nill', value: 'nill' }, { label: 'Low', value: 'low' }, { label: 'Sufficient', value: 'sufficient' }]} optionLabel="label" placeholder="Filter" size="small" className="w-full p-dropdown-sm" />
+                                </div> */}
+
+                            <Button type='submit' onClick={() => filterStockHistory()} icon="pi pi-send" severity='primary' size='small' />
+                        </div>
+
+                        <div>
+                            <IconField iconPosition="left">
+                                <InputIcon className="pi pi-search" />
+                                <InputText size="small" value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" className='p-inputtext-sm' />
+                            </IconField>
+                        </div>
+                    </div>
                 </div>
                 <DataTable value={stockHistoryData} size='small' removableSort paginator rows={10} rowsPerPageOptions={[5, 10, 20]} filters={filters} filterDisplay="menu" globalFilterFields={['createdAt', 'quantity', 'voucherNo', 'actionStatus', 'expiryDate']} emptyMessage="No stock history">
                     <Column field="serial" header="Ser. No."></Column>
@@ -297,7 +376,7 @@ const StockHistoryTable = ({ stock, getStockDetails, setAddStockHistory, selecte
                     </div>
                 </div>
             </Dialog>
-        </div>
+        </div >
     );
 };
 

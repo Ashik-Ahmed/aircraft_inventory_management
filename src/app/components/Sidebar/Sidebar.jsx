@@ -35,9 +35,9 @@ const Sidebar = () => {
     ]
 
     const getUser = async (token) => {
-        console.log(token);
+        // console.log(token);
         const data = await getLoggedInUser(token);
-        console.log(data);
+        // console.log(data);
         if (!data) {
             console.log("No user found");
             router.replace('/')
@@ -55,13 +55,13 @@ const Sidebar = () => {
 
     const handleLogout = () => {
         setUser(null);
-        console.log('Logout');
+        // console.log('Logout');
         cookie.remove('TOKEN')
         router.replace('/')
         // router.push('/')
         window.location.reload();
     }
-    console.log(user);
+    // console.log(user);
     if (!user) {
         return (
             <div></div>
