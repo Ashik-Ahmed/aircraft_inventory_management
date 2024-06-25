@@ -262,7 +262,7 @@ const Stock = ({ params: { stockId } }) => {
                     <div className='w-full'>
                         <InputText
                             {...register("quantity", { required: "Quantity is required" })}
-                            placeholder="Quantity*" type='number' className='w-full border p-1' />
+                            placeholder="Quantity*" className='w-full border p-1' />
                         {errors.quantity?.type === 'required' && <span className='text-xs text-red-500' role="alert">{errors.quantity.message}</span>}
                     </div>
                     <div className='w-full'>

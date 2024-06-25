@@ -31,7 +31,7 @@ const StockDetails = ({ stock }) => {
                 <div className='mt-4 flex flex-col gap-2'>
                     <p>Nomenclature: {stock?.nomenclature || '--'}</p>
                     <p>Aircraft Name: {stock?.aircraftId?.aircraftName || '--'}</p>
-                    <p>Available Qty: {availableQuantity || '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white text-xs bg-red-500 p-[1px]'>Low Stock</span>}</p>
+                    <p>Available Qty: {availableQuantity ? (availableQuantity % 1 === 0 ? availableQuantity : availableQuantity.toFixed(2)) + `${' (' + stock?.unit + ')'}` : '--'} {availableQuantity < stock?.minimumQuantity && <span className='text-white text-xs bg-red-500 p-[1px]'>Low Stock</span>}</p>
                     <p>Card No.: {stock?.cardNo || '--'}</p>
                     <p>Stock/Part No.: {stock?.stockNo || '--'}</p>
                     <p>Unit: {stock?.unit || '--'}</p>
